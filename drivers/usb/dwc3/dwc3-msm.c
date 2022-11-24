@@ -253,6 +253,7 @@ struct extcon_nb {
 	struct notifier_block	vbus_nb;
 	struct notifier_block	id_nb;
 	struct notifier_block	blocking_sync_nb;
+	bool			is_eud;
 };
 
 /* Input bits to state machine (mdwc->inputs) */
@@ -3001,7 +3002,6 @@ static void dwc3_resume_work(struct work_struct *w)
 	unsigned int extcon_id;
 	struct extcon_dev *edev = NULL;
 	const char *edev_name;
-	char *eud_str;
 	int ret = 0;
 
 	dev_dbg(mdwc->dev, "%s: dwc3 resume work\n", __func__);
@@ -3017,8 +3017,7 @@ static void dwc3_resume_work(struct work_struct *w)
 		edev_name = extcon_get_edev_name(edev);
 		dbg_log_string("edev:%s\n", edev_name);
 		/* Skip querying speed and cc_state for EUD edev */
-		eud_str = strnstr(edev_name, "eud", strlen(edev_name));
-		if (eud_str)
+		if (mdwc->extcon[mdwc->ext_idx].is_eud)
 			goto skip_update;
 	}
 
@@ -3373,7 +3372,6 @@ static int dwc3_msm_vbus_notifier(struct notifier_block *nb,
 	struct extcon_dev *edev = ptr;
 	struct extcon_nb *enb = container_of(nb, struct extcon_nb, vbus_nb);
 	struct dwc3_msm *mdwc = enb->mdwc;
-	char *eud_str;
 	const char *edev_name;
 
 	if (!edev || !mdwc)
@@ -3387,8 +3385,7 @@ static int dwc3_msm_vbus_notifier(struct notifier_block *nb,
 	dbg_log_string("edev:%s\n", edev_name);
 
 	/* detect USB spoof disconnect/connect notification with EUD device */
-	eud_str = strnstr(edev_name, "eud", strlen(edev_name));
-	if (eud_str) {
+	if (mdwc->extcon[enb->idx].is_eud) {
 		if (mdwc->eud_active == event)
 			return NOTIFY_DONE;
 		mdwc->eud_active = event;
@@ -3416,12 +3413,34 @@ static int dwc3_msm_vbus_notifier(struct notifier_block *nb,
 	return NOTIFY_DONE;
 }
 
+static int dwc3_msm_extcon_is_valid_source(struct dwc3_msm *mdwc)
+{
+	struct device_node *node = mdwc->dev->of_node;
+	int idx;
+	int count;
+
+	count = of_count_phandle_with_args(node, "extcon", NULL);
+	if (count < 0) {
+		dev_err(mdwc->dev, "of_count_phandle_with_args failed\n");
+		return 0;
+	}
+
+	for (idx = 0; idx < count; idx++) {
+		if (!mdwc->extcon[idx].is_eud)
+			return 1;
+	}
+
+	return 0;
+}
+
 static int dwc3_msm_extcon_register(struct dwc3_msm *mdwc)
 {
 	struct device_node *node = mdwc->dev->of_node;
 	struct extcon_dev *edev;
 	int idx, extcon_cnt, ret = 0;
 	bool check_vbus_state, check_id_state, phandle_found = false;
+	char *eud_str;
+	const char *edev_name;
 
 	extcon_cnt = of_count_phandle_with_args(node, "extcon", NULL);
 	if (extcon_cnt < 0) {
@@ -3448,6 +3467,11 @@ static int dwc3_msm_extcon_register(struct dwc3_msm *mdwc)
 		mdwc->extcon[idx].mdwc = mdwc;
 		mdwc->extcon[idx].edev = edev;
 		mdwc->extcon[idx].idx = idx;
+
+		edev_name = extcon_get_edev_name(edev);
+		eud_str = strnstr(edev_name, "eud", strlen(edev_name));
+		if (eud_str)
+			mdwc->extcon[idx].is_eud = true;
 
 		mdwc->extcon[idx].vbus_nb.notifier_call =
 						dwc3_msm_vbus_notifier;
@@ -4055,7 +4079,9 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 		} else {
 			queue_delayed_work(mdwc->sm_usb_wq, &mdwc->sm_work, 0);
 		}
-	} else {
+	}
+
+	if (!mdwc->extcon || !dwc3_msm_extcon_is_valid_source(mdwc)) {
 		switch (dwc->dr_mode) {
 		case USB_DR_MODE_DRD:
 			if (of_property_read_bool(node,
