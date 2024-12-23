@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2018-2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 /* -------------------------------------------------------------------------
@@ -2519,6 +2520,13 @@ int32_t npu_host_unload_network(struct npu_client *client,
 		return -EINVAL;
 	}
 
+	if (network->is_executing) {
+		pr_err("network is in execution\n");
+		network_put(network);
+		mutex_unlock(&host_ctx->lock);
+		return -EINVAL;
+	}
+
 	if (network->fw_error) {
 		NPU_ERR("fw in error state, skip unload network in fw\n");
 		goto free_network;
@@ -2677,6 +2685,12 @@ int32_t npu_host_exec_network_v2(struct npu_client *client,
 		goto exec_v2_done;
 	}
 
+	if (network->is_executing) {
+		pr_err("network is already in execution\n");
+		ret = -EINVAL;
+		goto exec_v2_done;
+	}
+
 	NPU_DBG("execute_v2 network %lld\n", network->id);
 	num_patch_params = exec_ioctl->patch_buf_info_num;
 	pkt_size = num_patch_params * sizeof(struct npu_patch_params_v2) +
@@ -2688,6 +2702,7 @@ int32_t npu_host_exec_network_v2(struct npu_client *client,
 		goto exec_v2_done;
 	}
 
+	network->is_executing = true;
 	for (i = 0; i < num_patch_params; i++) {
 		exec_packet->patch_params[i].id = patch_buf_info[i].buf_id;
 		NPU_DBG("%d: patch_id: %x\n", i,
@@ -2791,6 +2806,7 @@ free_exec_cmd:
 	npu_free_network_cmd(host_ctx, exec_cmd);
 free_exec_packet:
 	kfree(exec_packet);
+	network->is_executing = false;
 exec_v2_done:
 	network_put(network);
 	mutex_unlock(&host_ctx->lock);
