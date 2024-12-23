@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2018-2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 /* -------------------------------------------------------------------------
@@ -1313,8 +1314,6 @@ static int npu_set_fw_state(struct npu_client *client, uint32_t enable)
 	int rc = 0;
 
 	if (host_ctx->network_num > 0) {
-		NPU_ERR("Need to unload network first\n");
-		mutex_unlock(&npu_dev->dev_lock);
 		return -EINVAL;
 	}
 
