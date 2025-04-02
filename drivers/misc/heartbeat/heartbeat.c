@@ -73,7 +73,6 @@ void trigger_heartbeat_event(const char *driver_name, uint32_t state)
 	}
 
 	sysfs_notify(hb_priv_data->hb_kobj, NULL, "sysstate_value");
-	sysstate_value = 0;
 	mutex_unlock(&hb_priv_data->hb_lock);
 }
 
@@ -82,7 +81,6 @@ void send_qti_events(struct work_struct *work)
 	int ret;
 
 	mutex_lock(&hb_priv_data->hb_lock);
-	sysstate_value = 0;
 	hb_log_info("%s: sysstate_value(%x)",
 			__func__, sysstate_value);
 	ret = send_heartbeat_event(hb_priv_data->qti_can_priv_data,
@@ -267,6 +265,7 @@ static int qti_heartbeat_probe(struct platform_device *pdev)
 		INIT_DELAYED_WORK(&hb_priv_data->hb_work, send_qti_events);
 		schedule_delayed_work(&hb_priv_data->hb_work, QTI_EVENT_TIMEOUT*HZ);
 	}
+
 	pr_info("%s completed", __func__);
 exit:
 	return ret;
