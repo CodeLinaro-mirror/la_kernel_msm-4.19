@@ -22,6 +22,8 @@
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 #include <soc/qcom/boot_stats.h>
+#include <linux/suspend.h>
+#include <linux/rtc.h>
 
 #define MAX_STRING_LEN 256
 #define BOOT_MARKER_MAX_LEN 50
@@ -133,6 +135,51 @@ static void _create_boot_marker(const char *name,
 	list_add_tail(&(new_boot_marker->list), &(boot_marker_list.list));
 	spin_unlock(&boot_marker_list.slock);
 }
+
+static void calculate_sleep_time(struct timespec64 suspend_ts,
+		struct timespec64 resume_ts)
+{
+	struct timespec64 sleep_time_diff;
+	u64 sleep_time_in_ticks;
+
+	sleep_time_diff = timespec64_sub(resume_ts, suspend_ts);
+	sleep_time_in_ticks = (sleep_time_diff.tv_sec * 1000 +
+		sleep_time_diff.tv_nsec / 1000000) * TIMER_KHZ / 1000;
+
+	destroy_marker("M - STR Sleep Time");
+	_create_boot_marker("M - STR Sleep Time", sleep_time_in_ticks);
+}
+
+/**
+ * boot_kpi_pm_notifier() - PM notifier callback function.
+ * @nb:		Pointer to the notifier block.
+ * @event:	Suspend state event from PM module.
+ * @unused:	Null pointer from PM module.
+ *
+ * This function is register as callback function to get notifications
+ * from the PM module on the system suspend state.
+ */
+static int boot_kpi_pm_notifier(struct notifier_block *nb,
+		unsigned long event, void *unused)
+{
+	static struct timespec64 suspend_ts, resume_ts;
+
+	switch (event) {
+	case PM_SUSPEND_PREPARE:
+		ktime_get_real_ts64(&suspend_ts);
+		break;
+
+	case PM_POST_SUSPEND:
+		ktime_get_real_ts64(&resume_ts);
+		calculate_sleep_time(suspend_ts, resume_ts);
+		break;
+	}
+	return NOTIFY_DONE;
+}
+
+static struct notifier_block boot_kpi_pm_nb = {
+	.notifier_call = boot_kpi_pm_notifier,
+};
 
 static void boot_marker_cleanup(void)
 {
@@ -293,6 +340,10 @@ static int init_bootkpi(void)
 
 	INIT_LIST_HEAD(&boot_marker_list.list);
 	spin_lock_init(&boot_marker_list.slock);
+	ret = register_pm_notifier(&boot_kpi_pm_nb);
+	if (ret)
+		return ret;
+
 	return 0;
 }
 
@@ -302,6 +353,7 @@ static void exit_bootkpi(void)
 	sysfs_remove_group(bootkpi_obj, attr_grp);
 	kobject_del(bootkpi_obj);
 	kfree(attr_grp);
+	unregister_pm_notifier(&boot_kpi_pm_nb);
 }
 #endif
 
