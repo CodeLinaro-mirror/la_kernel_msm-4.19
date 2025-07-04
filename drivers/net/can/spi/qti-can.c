@@ -78,6 +78,7 @@ struct qti_can {
 	bool support_can_fd;
 	bool use_qtimer;
 	bool can_fw_cmd_timeout_req;
+	bool heartbeat_enable;
 	u32 rem_all_buffering_timeout_ms;
 	u32 can_fw_cmd_timeout_ms;
 	s64 time_diff;
@@ -567,6 +568,9 @@ static int qti_can_process_response(struct qti_can *priv_data,
 
 exit:
 	if (resp->cmd == priv_data->wait_cmd) {
+		if (resp->cmd == CMD_GET_FW_BR_VERSION) {
+			priv_data->heartbeat_enable = true;
+		}
 		priv_data->cmd_result = ret;
 		complete(&priv_data->response_completion);
 	}
@@ -739,24 +743,29 @@ int send_heartbeat_event(void *qti_can_priv_data, uint32_t sysstate_val, int len
 
 	priv_data = (struct qti_can *) qti_can_priv_data;
 
-	mutex_lock(&priv_data->spi_lock);
+	if (priv_data->heartbeat_enable == true) {
+		dev_info(&priv_data->spidev->dev, "Heartbeat enabled \r\n");
+		mutex_lock(&priv_data->spi_lock);
 
-	tx_buf = priv_data->tx_buf;
-	rx_buf = priv_data->rx_buf;
-	memset(tx_buf, 0, XFER_BUFFER_SIZE);
-	memset(rx_buf, 0, XFER_BUFFER_SIZE);
+		tx_buf = priv_data->tx_buf;
+		rx_buf = priv_data->rx_buf;
+		memset(tx_buf, 0, XFER_BUFFER_SIZE);
+		memset(rx_buf, 0, XFER_BUFFER_SIZE);
 
-	req = (struct spi_mosi *)tx_buf;
-	req->cmd = CMD_SEND_HEARTBEAT_EVENT;
-	req->len = len;
-	req->seq = atomic_inc_return(&priv_data->msg_seq);
-	req->data[0] = (sysstate_val & 0x000000FF);
-	req->data[1] = (sysstate_val>>8 & 0x000000FF);
-	req->data[2] = (sysstate_val>>16 & 0x000000FF);
-	req->data[3] = (sysstate_val>>24 & 0x000000FF);
+		req = (struct spi_mosi *)tx_buf;
+		req->cmd = CMD_SEND_HEARTBEAT_EVENT;
+		req->len = len;
+		req->seq = atomic_inc_return(&priv_data->msg_seq);
+		req->data[0] = (sysstate_val & 0x000000FF);
+		req->data[1] = (sysstate_val>>8 & 0x000000FF);
+		req->data[2] = (sysstate_val>>16 & 0x000000FF);
+		req->data[3] = (sysstate_val>>24 & 0x000000FF);
 
-	ret = qti_can_do_spi_transaction(priv_data);
-	mutex_unlock(&priv_data->spi_lock);
+		ret = qti_can_do_spi_transaction(priv_data);
+		mutex_unlock(&priv_data->spi_lock);
+	} else {
+		dev_info(&priv_data->spidev->dev, "Heartbeat is disabled \r\n");
+	}
 
 	return ret;
 
@@ -1298,10 +1307,20 @@ static int qti_can_end_fwupgrade_ioctl(struct net_device *netdev,
 
 	mutex_lock(&priv_data->spi_lock);
 	LOGDI("%s len %d\n", __func__, len);
-
+	priv_data->wait_cmd = CMD_END_FIRMWARE_UPGRADE;
+	priv_data->cmd_result = -1;
+	reinit_completion(&priv_data->response_completion);
 	ret = qti_can_send_spi_locked(priv_data, spi_cmd, len, data);
-
 	mutex_unlock(&priv_data->spi_lock);
+
+	if (ret == 0) {
+		LOGDI("%s ready to wait for response\n", __func__);
+		wait_for_completion_interruptible_timeout(
+					&priv_data->response_completion,
+					msecs_to_jiffies(4000));
+		ret = priv_data->cmd_result;
+		}
+		LOGDI("qti_can_end_fwupgrade_ioctl %x\n", ret);
 
 	return ret;
 }
@@ -1335,6 +1354,8 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 	mutex_lock(&priv_data->spi_lock);
 	if (spi_cmd == CMD_FIRMWARE_UPGRADE_DATA ||
 	    spi_cmd == CMD_BOOT_ROM_UPGRADE_DATA) {
+		priv_data->heartbeat_enable = false;
+		dev_info(&priv_data->spidev->dev, "Fw Upgrade begin disabled HB \r\n");
 		ioctl_data =
 			devm_kzalloc(&spi->dev,
 				     sizeof(struct qti_can_ioctl_req),
@@ -1360,30 +1381,48 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 			len = ioctl_data->len;
 			data = ioctl_data->data;
 		}
-	}
-	LOGDI("%s len %d\n", __func__, len);
 
-	if (len > 64 || len < 0) {
-		LOGDE("len value[%d] is not correct!!\n", len);
-		return -EINVAL;
-	}
+		if (len > 64 || len < 0) {
+			LOGDE("len value[%d] is not correct!!\n", len);
+			return -EINVAL;
+		}
 
-	priv_data->wait_cmd = spi_cmd;
-	priv_data->cmd_result = -1;
-	reinit_completion(&priv_data->response_completion);
+		priv_data->wait_cmd = spi_cmd;
+		priv_data->cmd_result = -1;
+		dev_info(&priv_data->spidev->dev, "SPI cmd %x\r\n",priv_data->wait_cmd);
+		ret = qti_can_send_spi_locked(priv_data, spi_cmd, len, data);
+		if (ioctl_data)
+			devm_kfree(&spi->dev, ioctl_data);
+		mutex_unlock(&priv_data->spi_lock);
 
-	ret = qti_can_send_spi_locked(priv_data, spi_cmd, len, data);
-	if (ioctl_data)
-		devm_kfree(&spi->dev, ioctl_data);
-	mutex_unlock(&priv_data->spi_lock);
+		LOGDI("non blocking ioctl %x\n", ret);
+	} else {
+			LOGDI("%s len %d\n", __func__, len);
 
-	if (ret == 0) {
-		LOGDI("%s ready to wait for response\n", __func__);
-		wait_for_completion_interruptible_timeout(
+		if (len > 64 || len < 0) {
+			LOGDE("len value[%d] is not correct!!\n", len);
+			return -EINVAL;
+		}
+
+		priv_data->wait_cmd = spi_cmd;
+		priv_data->cmd_result = -1;
+		reinit_completion(&priv_data->response_completion);
+		dev_info(&priv_data->spidev->dev, "SPI cmd %x\r\n",priv_data->wait_cmd);
+		ret = qti_can_send_spi_locked(priv_data, spi_cmd, len, data);
+		if (ioctl_data)
+			devm_kfree(&spi->dev, ioctl_data);
+		mutex_unlock(&priv_data->spi_lock);
+
+		if (ret == 0) {
+			LOGDI("%s ready to wait for response\n", __func__);
+			wait_for_completion_interruptible_timeout(
 					&priv_data->response_completion,
-					5 * HZ);
-		ret = priv_data->cmd_result;
+					msecs_to_jiffies(1000));
+			ret = priv_data->cmd_result;
+		}
+		LOGDI("qti_can_do_blocking_ioctl %x\n", ret);
 	}
+
 	return ret;
 }
 
@@ -1760,7 +1799,8 @@ static int qti_can_probe(struct spi_device *spi)
 		}
 	}
 
-
+	/*Hearbeat is enabled during boot up*/
+	priv_data->heartbeat_enable = true;
 	err = request_threaded_irq(spi->irq, NULL, qti_can_irq,
 				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
 				   "qti-can", priv_data);
