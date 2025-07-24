@@ -35,6 +35,8 @@
 
 #define MAX_TX_BUFFERS			1
 #define XFER_BUFFER_SIZE		64
+#define MAX_CANFLASHER_IOCTL_SIZE		2056
+#define FOTA_XFER_BUFFER_SIZE			2061
 #define RX_ASSEMBLY_BUFFER_SIZE		128
 #define QTI_CAN_FW_QUERY_RETRY_COUNT	3
 #define DRIVER_MODE_RAW_FRAMES		0
@@ -102,14 +104,14 @@ struct qti_can_tx_work {
 /* Message definitions */
 struct spi_mosi { /* TLV for MOSI line */
 	u8 cmd;
-	u8 len;
+	u16 len;
 	u16 seq;
 	u8 data[];
 } __packed;
 
 struct spi_miso { /* TLV for MISO line */
 	u8 cmd;
-	u8 len;
+	u16 len;
 	u16 seq; /* should match seq field from request, or 0 for unsols */
 	u8 data[];
 } __packed;
@@ -290,13 +292,14 @@ struct can_fw_br_resp {
 } __packed;
 
 struct qti_can_ioctl_req {
-	u8 len;
-	u8 data[64];
+	u16 len;
+	u8 data[MAX_CANFLASHER_IOCTL_SIZE];
 } __packed;
 
 /* sysfs related variables */
 static struct kobject *qti_fw_kobject;
 struct can_fw_resp *g_fw_str = NULL;
+static struct qti_can_ioctl_req *ioctl_data = NULL;
 
 static int qti_can_rx_message(struct qti_can *priv_data);
 #ifdef CONFIG_QTI_HEARTBEAT
@@ -1241,16 +1244,23 @@ static int qti_can_send_spi_locked(struct qti_can *priv_data, int cmd, int len,
 
 	tx_buf = priv_data->tx_buf;
 	rx_buf = priv_data->rx_buf;
-	memset(tx_buf, 0, XFER_BUFFER_SIZE);
-	memset(rx_buf, 0, XFER_BUFFER_SIZE);
-	priv_data->xfer_length = XFER_BUFFER_SIZE;
+
+	if( cmd == CMD_GET_FW_BR_VERSION || cmd == CMD_BEGIN_FIRMWARE_UPGRADE) {
+		memset(tx_buf, 0, XFER_BUFFER_SIZE);
+		memset(rx_buf, 0, XFER_BUFFER_SIZE);
+		priv_data->xfer_length = XFER_BUFFER_SIZE;
+	} else {
+		memset(tx_buf, 0, FOTA_XFER_BUFFER_SIZE);
+		memset(rx_buf, 0, FOTA_XFER_BUFFER_SIZE);
+		priv_data->xfer_length = FOTA_XFER_BUFFER_SIZE;
+	}
 
 	req = (struct spi_mosi *)tx_buf;
 	req->cmd = cmd;
 	req->len = len;
 	req->seq = atomic_inc_return(&priv_data->msg_seq);
 
-	if (unlikely(len > 64))
+	if (unlikely(len > MAX_CANFLASHER_IOCTL_SIZE))
 		return -EINVAL;
 	memcpy(req->data, data, len);
 
@@ -1332,7 +1342,6 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 
 	struct qti_can *priv_data;
 	struct qti_can_netdev_privdata *netdev_priv_data;
-	struct qti_can_ioctl_req *ioctl_data = NULL;
 	struct spi_device *spi;
 	int len = 0;
 	u8 *data = NULL;
@@ -1356,16 +1365,9 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 	    spi_cmd == CMD_BOOT_ROM_UPGRADE_DATA) {
 		priv_data->heartbeat_enable = false;
 		dev_info(&priv_data->spidev->dev, "Fw Upgrade begin disabled HB \r\n");
-		ioctl_data =
-			devm_kzalloc(&spi->dev,
-				     sizeof(struct qti_can_ioctl_req),
-				     GFP_KERNEL);
-		if (!ioctl_data)
-			return -ENOMEM;
 
 		if (copy_from_user(ioctl_data, ifr->ifr_data,
 				   sizeof(struct qti_can_ioctl_req))) {
-			devm_kfree(&spi->dev, ioctl_data);
 			return -EFAULT;
 		}
 
@@ -1382,7 +1384,7 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 			data = ioctl_data->data;
 		}
 
-		if (len > 64 || len < 0) {
+		if (len > MAX_CANFLASHER_IOCTL_SIZE || len < 0) {
 			LOGDE("len value[%d] is not correct!!\n", len);
 			return -EINVAL;
 		}
@@ -1391,15 +1393,13 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 		priv_data->cmd_result = -1;
 		dev_info(&priv_data->spidev->dev, "SPI cmd %x\r\n",priv_data->wait_cmd);
 		ret = qti_can_send_spi_locked(priv_data, spi_cmd, len, data);
-		if (ioctl_data)
-			devm_kfree(&spi->dev, ioctl_data);
 		mutex_unlock(&priv_data->spi_lock);
 
 		LOGDI("non blocking ioctl %x\n", ret);
 	} else {
 			LOGDI("%s len %d\n", __func__, len);
 
-		if (len > 64 || len < 0) {
+		if (len > MAX_CANFLASHER_IOCTL_SIZE || len < 0) {
 			LOGDE("len value[%d] is not correct!!\n", len);
 			return -EINVAL;
 		}
@@ -1409,8 +1409,6 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 		reinit_completion(&priv_data->response_completion);
 		dev_info(&priv_data->spidev->dev, "SPI cmd %x\r\n",priv_data->wait_cmd);
 		ret = qti_can_send_spi_locked(priv_data, spi_cmd, len, data);
-		if (ioctl_data)
-			devm_kfree(&spi->dev, ioctl_data);
 		mutex_unlock(&priv_data->spi_lock);
 
 		if (ret == 0) {
@@ -1575,12 +1573,8 @@ static struct qti_can *qti_can_create_priv_data(struct spi_device *spi)
 		goto cleanup_privdata;
 	}
 
-	priv_data->tx_buf = devm_kzalloc(dev,
-					 XFER_BUFFER_SIZE,
-					 GFP_KERNEL);
-	priv_data->rx_buf = devm_kzalloc(dev,
-					 XFER_BUFFER_SIZE,
-					 GFP_KERNEL);
+	priv_data->tx_buf = devm_kzalloc(dev, FOTA_XFER_BUFFER_SIZE, GFP_KERNEL);
+	priv_data->rx_buf = devm_kzalloc(dev, FOTA_XFER_BUFFER_SIZE, GFP_KERNEL);
 	if (!priv_data->tx_buf || !priv_data->rx_buf) {
 		LOGDE("Couldn't alloc tx or rx buffers\n");
 		err = -ENOMEM;
@@ -1799,8 +1793,15 @@ static int qti_can_probe(struct spi_device *spi)
 		}
 	}
 
+	ioctl_data = kzalloc(sizeof(struct qti_can_ioctl_req), GFP_KERNEL);
+	if (!ioctl_data) {
+			err = -ENOMEM;
+			goto unregister_candev;
+	}
+
 	/*Hearbeat is enabled during boot up*/
 	priv_data->heartbeat_enable = true;
+	dev_info(dev, "Enabled Heartbeat during boot up\n");
 	err = request_threaded_irq(spi->irq, NULL, qti_can_irq,
 				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
 				   "qti-can", priv_data);
