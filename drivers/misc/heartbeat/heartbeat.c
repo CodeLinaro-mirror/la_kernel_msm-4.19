@@ -51,12 +51,18 @@ void trigger_heartbeat_event(const char *driver_name, uint32_t state)
 {
 	int ret;
         pr_debug("%s: driver_name(%s), state(0x%x)", __func__, driver_name, state);
+
+	if (!hb_priv_data || !hb_priv_data->trigger_hb_buf) {
+		pr_err("%s: Heartbeat data or buffer is NULL",__func__);
+		return;
+	}
+
 	mutex_lock(&hb_priv_data->hb_lock);
 	sysstate_value = state;
 	hb_priv_data->trigger_hb_event = true;
 	snprintf(hb_priv_data->trigger_hb_buf, TRIGGER_HB_BUF_SIZE,
 			"%8x", state);
-	hb_log_info("%s: driver_name(%s), trigger_hb_event(%s), sysstate_value(%x)",
+	hb_log_info("%s: driver_name(%s), trigger_hb_event(%d), sysstate_value(%x)",
 			__func__, driver_name, hb_priv_data->trigger_hb_event, sysstate_value);
 	if (hb_priv_data->mcu_present) {
 		if (!hb_priv_data->qti_can_priv_data) {
@@ -99,7 +105,7 @@ static ssize_t android_status_show(struct kobject *kobj,
 {
 	if (hb_priv_data->trigger_hb_event) {
 		hb_priv_data->trigger_hb_event = false;
-		hb_log_info("%s: trigger_hb_event(%s)",
+		hb_log_info("%s: trigger_hb_event(%d)",
 				__func__, hb_priv_data->trigger_hb_event);
 		return snprintf(buf, HB_BUFFER_SIZE, "%s",
 				hb_priv_data->trigger_hb_buf);
