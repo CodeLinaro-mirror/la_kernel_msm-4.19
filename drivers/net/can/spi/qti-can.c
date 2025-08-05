@@ -35,7 +35,11 @@
 
 #define MAX_TX_BUFFERS			1
 #define XFER_BUFFER_SIZE		64
+#ifdef CONFIG_QTI_CAN_TARGET_2W_V2
 #define MAX_CANFLASHER_IOCTL_SIZE		2056
+#else
+#define MAX_CANFLASHER_IOCTL_SIZE		64
+#endif
 #define FOTA_XFER_BUFFER_SIZE			2061
 #define RX_ASSEMBLY_BUFFER_SIZE		128
 #define QTI_CAN_FW_QUERY_RETRY_COUNT	3
@@ -80,7 +84,9 @@ struct qti_can {
 	bool support_can_fd;
 	bool use_qtimer;
 	bool can_fw_cmd_timeout_req;
+#ifdef CONFIG_QTI_HEARTBEAT
 	bool heartbeat_enable;
+#endif
 	u32 rem_all_buffering_timeout_ms;
 	u32 can_fw_cmd_timeout_ms;
 	s64 time_diff;
@@ -104,14 +110,22 @@ struct qti_can_tx_work {
 /* Message definitions */
 struct spi_mosi { /* TLV for MOSI line */
 	u8 cmd;
+#ifdef CONFIG_QTI_CAN_TARGET_2W_V2
 	u16 len;
+#else
+	u8 len;
+#endif
 	u16 seq;
 	u8 data[];
 } __packed;
 
 struct spi_miso { /* TLV for MISO line */
 	u8 cmd;
+#ifdef CONFIG_QTI_CAN_TARGET_2W_V2
 	u16 len;
+#else
+	u8 len;
+#endif
 	u16 seq; /* should match seq field from request, or 0 for unsols */
 	u8 data[];
 } __packed;
@@ -292,7 +306,11 @@ struct can_fw_br_resp {
 } __packed;
 
 struct qti_can_ioctl_req {
+#ifdef CONFIG_QTI_CAN_TARGET_2W_V2
 	u16 len;
+#else
+	u8 len;
+#endif
 	u8 data[MAX_CANFLASHER_IOCTL_SIZE];
 } __packed;
 
@@ -300,6 +318,8 @@ struct qti_can_ioctl_req {
 static struct kobject *qti_fw_kobject;
 struct can_fw_resp *g_fw_str = NULL;
 static struct qti_can_ioctl_req *ioctl_data = NULL;
+static struct spi_transfer *xfer = NULL;
+static struct spi_message *msg = NULL;
 
 static int qti_can_rx_message(struct qti_can *priv_data);
 #ifdef CONFIG_QTI_HEARTBEAT
@@ -571,9 +591,11 @@ static int qti_can_process_response(struct qti_can *priv_data,
 
 exit:
 	if (resp->cmd == priv_data->wait_cmd) {
+#ifdef CONFIG_QTI_HEARTBEAT
 		if (resp->cmd == CMD_GET_FW_BR_VERSION) {
 			priv_data->heartbeat_enable = true;
 		}
+#endif
 		priv_data->cmd_result = ret;
 		complete(&priv_data->response_completion);
 	}
@@ -644,8 +666,6 @@ static int qti_can_process_rx(struct qti_can *priv_data, char *rx_buf)
 static int qti_can_do_spi_transaction(struct qti_can *priv_data)
 {
 	struct spi_device *spi;
-	struct spi_transfer *xfer;
-	struct spi_message *msg;
 	struct device *dev;
 	int ret;
 	int i = 0;
@@ -656,8 +676,7 @@ static int qti_can_do_spi_transaction(struct qti_can *priv_data)
 
 	spi = priv_data->spidev;
 	dev = &spi->dev;
-	msg = devm_kzalloc(&spi->dev, sizeof(*msg), GFP_KERNEL);
-	xfer = devm_kzalloc(&spi->dev, sizeof(*xfer), GFP_KERNEL);
+
 	if (!xfer || !msg)
 		return -ENOMEM;
 	LOGDI(">%x %2d [%d]\n", priv_data->tx_buf[0],
@@ -732,8 +751,6 @@ static int qti_can_do_spi_transaction(struct qti_can *priv_data)
 		qti_can_process_rx(priv_data, priv_data->rx_buf);
 	}
 
-	devm_kfree(&spi->dev, msg);
-	devm_kfree(&spi->dev, xfer);
 	return ret;
 }
 
@@ -747,7 +764,6 @@ int send_heartbeat_event(void *qti_can_priv_data, uint32_t sysstate_val, int len
 	priv_data = (struct qti_can *) qti_can_priv_data;
 
 	if (priv_data->heartbeat_enable == true) {
-		dev_info(&priv_data->spidev->dev, "Heartbeat enabled \r\n");
 		mutex_lock(&priv_data->spi_lock);
 
 		tx_buf = priv_data->tx_buf;
@@ -1245,15 +1261,18 @@ static int qti_can_send_spi_locked(struct qti_can *priv_data, int cmd, int len,
 	tx_buf = priv_data->tx_buf;
 	rx_buf = priv_data->rx_buf;
 
+#ifdef CONFIG_QTI_CAN_TARGET_2W_V2
 	if( cmd == CMD_GET_FW_BR_VERSION || cmd == CMD_BEGIN_FIRMWARE_UPGRADE) {
-		memset(tx_buf, 0, XFER_BUFFER_SIZE);
-		memset(rx_buf, 0, XFER_BUFFER_SIZE);
 		priv_data->xfer_length = XFER_BUFFER_SIZE;
 	} else {
-		memset(tx_buf, 0, FOTA_XFER_BUFFER_SIZE);
-		memset(rx_buf, 0, FOTA_XFER_BUFFER_SIZE);
 		priv_data->xfer_length = FOTA_XFER_BUFFER_SIZE;
 	}
+#else
+	priv_data->xfer_length = XFER_BUFFER_SIZE;
+#endif
+
+	memset(tx_buf, 0, FOTA_XFER_BUFFER_SIZE);
+	memset(rx_buf, 0, FOTA_XFER_BUFFER_SIZE);
 
 	req = (struct spi_mosi *)tx_buf;
 	req->cmd = cmd;
@@ -1363,7 +1382,9 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 	mutex_lock(&priv_data->spi_lock);
 	if (spi_cmd == CMD_FIRMWARE_UPGRADE_DATA ||
 	    spi_cmd == CMD_BOOT_ROM_UPGRADE_DATA) {
+#ifdef CONFIG_QTI_HEARTBEAT
 		priv_data->heartbeat_enable = false;
+#endif
 		dev_info(&priv_data->spidev->dev, "Fw Upgrade begin disabled HB \r\n");
 
 		if (copy_from_user(ioctl_data, ifr->ifr_data,
@@ -1389,6 +1410,7 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 			return -EINVAL;
 		}
 
+#ifdef CONFIG_QTI_CAN_TARGET_2W_V2
 		priv_data->wait_cmd = spi_cmd;
 		priv_data->cmd_result = -1;
 		dev_info(&priv_data->spidev->dev, "SPI cmd %x\r\n",priv_data->wait_cmd);
@@ -1403,7 +1425,7 @@ static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 			LOGDE("len value[%d] is not correct!!\n", len);
 			return -EINVAL;
 		}
-
+#endif
 		priv_data->wait_cmd = spi_cmd;
 		priv_data->cmd_result = -1;
 		reinit_completion(&priv_data->response_completion);
@@ -1658,6 +1680,9 @@ static int qti_can_probe(struct spi_device *spi)
 	struct qti_can *priv_data = NULL;
 	struct device *dev;
 
+	msg = devm_kzalloc(&spi->dev, sizeof(*msg), GFP_KERNEL);
+	xfer = devm_kzalloc(&spi->dev, sizeof(*xfer), GFP_KERNEL);
+
 	dev = &spi->dev;
 	dev_info(dev, "%s\n", __func__);
 
@@ -1799,9 +1824,6 @@ static int qti_can_probe(struct spi_device *spi)
 			goto unregister_candev;
 	}
 
-	/*Hearbeat is enabled during boot up*/
-	priv_data->heartbeat_enable = true;
-	dev_info(dev, "Enabled Heartbeat during boot up\n");
 	err = request_threaded_irq(spi->irq, NULL, qti_can_irq,
 				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
 				   "qti-can", priv_data);
@@ -1847,6 +1869,9 @@ static int qti_can_probe(struct spi_device *spi)
 	}
 #ifdef CONFIG_QTI_HEARTBEAT
 	err = register_heartbeat(priv_data);
+	/*Hearbeat is enabled during boot up*/
+	priv_data->heartbeat_enable = true;
+	dev_info(dev, "Enabled Heartbeat during boot up\n");
 	if (err) {
 		LOGDE("Failed to register heartbeat: %d", err);
 		goto unregister_candev;
