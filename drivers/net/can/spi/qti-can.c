@@ -759,7 +759,7 @@ int send_heartbeat_event(void *qti_can_priv_data, uint32_t sysstate_val, int len
 	struct qti_can *priv_data = NULL;
 	char *tx_buf, *rx_buf;
 	struct spi_mosi *req;
-	int ret;
+	int ret = 0;
 
 	priv_data = (struct qti_can *) qti_can_priv_data;
 
@@ -1079,7 +1079,7 @@ static int qti_can_data_buffering(struct net_device *netdev,
 				  struct ifreq *ifr, int cmd)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	u32 timeout;
 	struct spi_mosi *req;
 	struct qti_can_buffer *enable_buffering;
