@@ -667,7 +667,7 @@ static int qti_can_do_spi_transaction(struct qti_can *priv_data)
 {
 	struct spi_device *spi;
 	struct device *dev;
-	int ret;
+	int ret = 0;
 	int i = 0;
 	u8 tx_checksum = 0;
 	u8 rx_checksum = 0;
@@ -795,7 +795,7 @@ EXPORT_SYMBOL(send_heartbeat_event);
 static int qti_can_rx_message(struct qti_can *priv_data)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 
 	mutex_lock(&priv_data->spi_lock);
 	tx_buf = priv_data->tx_buf;
@@ -813,7 +813,7 @@ static int qti_can_rx_message(struct qti_can *priv_data)
 static int qti_can_query_firmware_version(struct qti_can *priv_data)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	struct spi_mosi *req;
 
 	mutex_lock(&priv_data->spi_lock);
@@ -852,7 +852,7 @@ static int qti_can_query_firmware_version(struct qti_can *priv_data)
 static int qti_can_notify_power_events(struct qti_can *priv_data, u8 event_type)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	struct spi_mosi *req;
 
 	mutex_lock(&priv_data->spi_lock);
@@ -876,7 +876,7 @@ static int qti_can_notify_power_events(struct qti_can *priv_data, u8 event_type)
 static int qti_can_set_bitrate(struct net_device *netdev)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	struct spi_mosi *req;
 	struct can_config_bit_timing *req_d;
 	struct qti_can *priv_data;
@@ -923,7 +923,7 @@ static int qti_can_write(struct qti_can *priv_data,
 			 int can_channel, struct canfd_frame *cf)
 {
 	char *tx_buf, *rx_buf;
-	int ret, i;
+	int ret = 0, i;
 	struct spi_mosi *req;
 	struct can_write_req *req_d;
 	struct net_device *netdev;
@@ -1048,7 +1048,7 @@ static netdev_tx_t qti_can_netdev_start_xmit(
 static int qti_can_send_release_can_buffer_cmd(struct net_device *netdev)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	struct spi_mosi *req;
 	struct qti_can *priv_data;
 	struct qti_can_netdev_privdata *netdev_priv_data;
@@ -1149,7 +1149,7 @@ static int qti_can_data_buffering(struct net_device *netdev,
 static int qti_can_remove_all_buffering(struct net_device *netdev)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	u32 timeout;
 	struct spi_mosi *req;
 	struct qti_can *priv_data;
@@ -1195,7 +1195,7 @@ static int qti_can_frame_filter(struct net_device *netdev,
 				struct ifreq *ifr, int cmd)
 {
 	char *tx_buf, *rx_buf;
-	int ret;
+	int ret = 0;
 	struct spi_mosi *req;
 	struct can_filter_req *add_filter;
 	struct can_filter_req *filter_request;
@@ -1313,7 +1313,7 @@ static int qti_can_convert_ioctl_cmd_to_spi_cmd(int ioctl_cmd)
 static int qti_can_end_fwupgrade_ioctl(struct net_device *netdev,
 				       struct ifreq *ifr, int cmd)
 {
-	int spi_cmd, ret;
+	int spi_cmd, ret = 0;
 
 	struct qti_can *priv_data;
 	struct qti_can_netdev_privdata *netdev_priv_data;
@@ -1357,7 +1357,7 @@ static int qti_can_end_fwupgrade_ioctl(struct net_device *netdev,
 static int qti_can_do_blocking_ioctl(struct net_device *netdev,
 				     struct ifreq *ifr, int cmd)
 {
-	int spi_cmd, ret;
+	int spi_cmd, ret = 0;
 
 	struct qti_can *priv_data;
 	struct qti_can_netdev_privdata *netdev_priv_data;
@@ -1911,7 +1911,7 @@ static void qti_can_shutdown(struct spi_device *spi)
 {
 	struct qti_can *priv_data = spi_get_drvdata(spi);
 	u8 power_event = CMD_AP_POWEROFF_EVENT;
-	int ret;
+	int ret = 0;
 
 	if (!priv_data){
 		pr_err("%s NULL pointer passed\n", __func__);
