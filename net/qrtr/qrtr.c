@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2015, Sony Mobile Communications Inc.
  * Copyright (c) 2013, 2018-2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -26,6 +27,7 @@
 #include <uapi/linux/sched/types.h>
 
 #include "qrtr.h"
+#include "service_db.h"
 
 #define QRTR_LOG_PAGE_CNT 4
 #define QRTR_INFO(ctx, x, ...)				\
@@ -306,6 +308,73 @@ static void qrtr_log_rx_msg(struct qrtr_node *node, struct sk_buff *skb)
 				  cb->type, le32_to_cpu(pkt.proc.node));
 	}
 }
+
+void qrtr_print_wakeup_reason(const void *data)
+{
+	struct service_info *sinfo = NULL;
+	const struct qrtr_hdr_v1 *v1;
+	const struct qrtr_hdr_v2 *v2;
+	struct qrtr_cb cb;
+	unsigned int size;
+	unsigned int ver;
+	int service_id;
+	size_t hdrlen;
+	u64 preview = 0;
+	int rc = 0;
+
+	ver = *(u8 *)data;
+	switch (ver) {
+	case QRTR_PROTO_VER_1:
+		v1 = (struct qrtr_hdr_v1 *)data;
+		hdrlen = sizeof(*v1);
+		cb.src_node = le32_to_cpu(v1->src_node_id);
+		cb.src_port = le32_to_cpu(v1->src_port_id);
+		cb.dst_node = le32_to_cpu(v1->dst_node_id);
+		cb.dst_port = le32_to_cpu(v1->dst_port_id);
+
+		size = le32_to_cpu(v1->size);
+		break;
+	case QRTR_PROTO_VER_2:
+		v2 = (struct qrtr_hdr_v2 *)data;
+		hdrlen = sizeof(*v2) + v2->optlen;
+		cb.src_node = le16_to_cpu(v2->src_node_id);
+		cb.src_port = le16_to_cpu(v2->src_port_id);
+		cb.dst_node = le16_to_cpu(v2->dst_node_id);
+		cb.dst_port = le16_to_cpu(v2->dst_port_id);
+
+		if (cb.src_port == (u16)QRTR_PORT_CTRL)
+			cb.src_port = QRTR_PORT_CTRL;
+		if (cb.dst_port == (u16)QRTR_PORT_CTRL)
+			cb.dst_port = QRTR_PORT_CTRL;
+
+		size = le32_to_cpu(v2->size);
+		break;
+	default:
+		return;
+	}
+
+
+	rc = qrtr_service_lookup(cb.src_node, cb.src_port, &sinfo);
+
+	if (rc < 0){
+                rc = qrtr_service_lookup(cb.dst_node, cb.dst_port, &sinfo);
+	}
+
+	if (!rc && sinfo){
+                service_id = sinfo->service_id;
+	}
+
+	size = (sizeof(preview) > size) ? size : sizeof(preview);
+	memcpy(&preview, data + hdrlen, size);
+
+	pr_info("%s: src[0x%x:0x%x] dst[0x%x:0x%x] [%08x %08x] service[0x%x]\n",
+		__func__,
+		cb.src_node, cb.src_port,
+		cb.dst_node, cb.dst_port,
+		(unsigned int)preview, (unsigned int)(preview >> 32),
+		service_id);
+}
+EXPORT_SYMBOL(qrtr_print_wakeup_reason);
 
 static bool refcount_dec_and_rwsem_lock(refcount_t *r,
 					struct rw_semaphore *sem)
@@ -1795,10 +1864,13 @@ static int qrtr_recvmsg(struct socket *sock, struct msghdr *msg,
 			size_t size, int flags)
 {
 	DECLARE_SOCKADDR(struct sockaddr_qrtr *, addr, msg->msg_name);
+	struct qrtr_sock *ipc = qrtr_sk(sock->sk);
+	struct qrtr_ctrl_pkt pkt = {0,};
 	struct sock *sk = sock->sk;
 	struct sk_buff *skb;
 	struct qrtr_cb *cb;
 	int copied, rc;
+	u32 type;
 
 	lock_sock(sk);
 
@@ -1829,6 +1901,39 @@ static int qrtr_recvmsg(struct socket *sock, struct msghdr *msg,
 	}
 	rc = copied;
 
+	if (ipc->us.sq_port == QRTR_PORT_CTRL) {
+		/**
+		 * Load control packet from skb here to know the packet type
+		 * information as packet type on "cb" will be invalid for
+		 * local service.
+		 */
+		skb_copy_bits(skb, 0, &pkt, sizeof(pkt));
+		type = le32_to_cpu(pkt.cmd);
+		/**
+		 * add/remove service information to/from service lookup table
+		 * if the control packet is delivering to QRTR_PORT_CTRL
+		 */
+		if (type == QRTR_TYPE_NEW_SERVER) {
+			/**
+			 * Populate port address on control packet from "cb"
+			 * only for local service because port id will be 0
+			 * while sending NEW_SERVER control packet from local
+			 * service.
+			 */
+			if (le32_to_cpu(pkt.server.node) == qrtr_local_nid)
+				pkt.server.port = cpu_to_le32(cb->src_port);
+			qrtr_service_add(&pkt);
+		} else if (type == QRTR_TYPE_DEL_SERVER) {
+			/* Remove this server from lookup table */
+			qrtr_service_remove(&pkt);
+		} else if (type == QRTR_TYPE_BYE) {
+			/**
+			 * Remove all servers under this node from from lookup
+			 * table
+			 */
+			qrtr_service_node_remove(cb->src_node);
+		}
+	}
 	if (addr) {
 		/* There is an anonymous 2-byte hole after sq_family,
 		 * make sure to clear it.
