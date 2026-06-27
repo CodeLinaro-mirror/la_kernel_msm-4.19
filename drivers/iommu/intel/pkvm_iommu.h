@@ -145,7 +145,7 @@ int pkvm_write_iommu_msi(struct intel_iommu *iommu, u32 offset, u32 data,
 
 #else /* __PKVM_HYP__ */
 /* Maximum number of IOMMUs (DMAR units) the hypervisor manages. */
-#define PKVM_MAX_IOMMU_NUM	16
+#define PKVM_MAX_IOMMU_NUM	32
 /* TODO: Make this a dynamic value. */
 #define PKVM_MAX_DOMAIN_NUM	128
 
