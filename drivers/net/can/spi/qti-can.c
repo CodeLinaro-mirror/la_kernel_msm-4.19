@@ -42,7 +42,7 @@
 #endif
 #define FOTA_XFER_BUFFER_SIZE			2061
 #define RX_ASSEMBLY_BUFFER_SIZE		128
-#define QTI_CAN_FW_QUERY_RETRY_COUNT	3
+#define QTI_CAN_FW_QUERY_RETRY_COUNT	8
 #define DRIVER_MODE_RAW_FRAMES		0
 #define DRIVER_MODE_PROPERTIES		1
 #define DRIVER_MODE_AMB			2
@@ -837,13 +837,25 @@ static int qti_can_query_firmware_version(struct qti_can *priv_data)
 	mutex_unlock(&priv_data->spi_lock);
 
 	if (ret == 0) {
+		long wait_ret;
+
 		LOGDI("waiting for completion with timeout of %lu jiffies",
 		      msecs_to_jiffies(QUERY_FIRMWARE_TIMEOUT_MS));
-		wait_for_completion_interruptible_timeout(
+		wait_ret = wait_for_completion_interruptible_timeout(
 				&priv_data->response_completion,
 				msecs_to_jiffies(QUERY_FIRMWARE_TIMEOUT_MS));
-		LOGDI("done waiting");
-		ret = priv_data->cmd_result;
+		if (wait_ret == 0) {
+			dev_err(&priv_data->spidev->dev,
+				"FW version query timed out\n");
+			ret = -ETIMEDOUT;
+		} else if (wait_ret < 0) {
+			dev_err(&priv_data->spidev->dev,
+				"FW version query interrupted: %ld\n", wait_ret);
+			ret = (int)wait_ret;
+		} else {
+			ret = priv_data->cmd_result;
+		}
+		LOGDI("done waiting, wait_ret=%ld cmd_result=%d", wait_ret, ret);
 	}
 
 	return ret;
@@ -1851,15 +1863,17 @@ static int qti_can_probe(struct spi_device *spi)
 		goto unregister_candev;
 	}
 
+	/* Set suspend delay before FW query so wakeup GPIO has proper wait */
+	priv_data->mcu_suspend_delay = MCU_SUSPEND_DELAY_MS;
+
 	while ((query_err != 0) && (retry < QTI_CAN_FW_QUERY_RETRY_COUNT)) {
-		LOGDI("Trying to query fw version %d", retry);
+		dev_info(dev, "Trying to query fw version attempt %d", retry);
+		/* Re-assert suspend state so wakeup GPIO fires on every retry */
+		priv_data->mcu_pwr_state = 1;
 		query_err = qti_can_query_firmware_version(priv_data);
 		priv_data->assembly_buffer_size = 0;
 		retry++;
 	}
-
-	/* This should less than MCU FW Timeout */
-	priv_data->mcu_suspend_delay = MCU_SUSPEND_DELAY_MS;
 	if (query_err) {
 		LOGDE("QTI CAN probe failed\n");
 		err = -ENODEV;
