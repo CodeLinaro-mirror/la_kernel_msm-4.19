@@ -15,13 +15,13 @@
 
 #define QTI_EVENT_TIMEOUT                3
 #define HB_BUFFER_SIZE                   1024
-#define HB_PROBE_MAX_RETRY_CNT           3
 #define HB_DATA_LENGTH                   4
 #define HB_SYSSTATE_FAIL                 1
 #define TRIGGER_HB_BUF_SIZE              9
 #define HB_REG_WITH_QTI_CAN_SUCCESS      0
 #define HB_REG_WITH_QTI_CAN_FAIL         1
 #define HB_QTI_CAN_DATA_INVALID          1
+#define HB_PROBE_TIMEOUT_MS              2000
 
 typedef struct {
 	struct kobject *hb_kobj;
@@ -33,7 +33,7 @@ typedef struct {
 	bool mcu_present;
 	bool trigger_hb_event;
 	char *trigger_hb_buf;
-	u8 hb_probe_retry_count;
+	unsigned long hb_probe_timeout;
 } heartbeat;
 
 static bool enable_hb_logs;
@@ -237,18 +237,21 @@ static int qti_heartbeat_probe(struct platform_device *pdev)
 	hb_priv_data->mcu_present = mcu_is_present(&pdev->dev);
 	if (hb_priv_data->mcu_present) {
 		if (!hb_priv_data->qti_can_priv_data) {
-			if (hb_priv_data->hb_probe_retry_count < HB_PROBE_MAX_RETRY_CNT) {
-				pr_err("%s: trying to hb probe retry count %d",
-						__func__, hb_priv_data->hb_probe_retry_count);
-				hb_priv_data->hb_probe_retry_count++;
+			if (!hb_priv_data->hb_probe_timeout)
+				hb_priv_data->hb_probe_timeout = jiffies +
+					msecs_to_jiffies(HB_PROBE_TIMEOUT_MS);
+
+			if (time_before(jiffies, hb_priv_data->hb_probe_timeout)) {
+				pr_err("%s: qti_can_priv_data not ready, deferring probe",
+						__func__);
 				return -EPROBE_DEFER;
-			} else {
-				kfree(hb_priv_data);
-				pr_err("%s: heartbeat probe failed on invalid \
-						qti_can_data", __func__);
-				ret = -HB_QTI_CAN_DATA_INVALID;
-				goto exit;
 			}
+			pr_err("%s: qti_can_priv_data unavailable, heartbeat disabled",
+					__func__);
+			kfree(hb_priv_data);
+			hb_priv_data = NULL;
+			ret = -ENOMEM;
+			goto exit;
 		}
 	}
 
