@@ -152,6 +152,9 @@ ifdef CONFIG_LTO_CLANG
 cmd_ld_single_m = $(if $(is-single-obj-m), ; $(LD) $(ld_flags) -r -o $(tmp-target) $@; mv $(tmp-target) $@)
 endif
 
+# Ensure p3s_user_pages.h is the last include in compiled C files
+cmd_p3s_check = $(CONFIG_SHELL) $(srctree)/scripts/check-p3s-include.sh $<
+
 quiet_cmd_cc_o_c = CC $(quiet_modtag)  $@
       cmd_cc_o_c = $(CC) $(c_flags) -c -o $@ $< \
 		$(cmd_ld_single_m) \
@@ -219,6 +222,7 @@ cmd_warn_shared_object = $(if $(word 2, $(modname-multi)),$(warning $(kbuild-fil
 endif
 
 define rule_cc_o_c
+	$(call cmd,p3s_check)
 	$(call cmd_and_fixdep,cc_o_c)
 	$(call cmd,checksrc)
 	$(call cmd,checkdoc)
