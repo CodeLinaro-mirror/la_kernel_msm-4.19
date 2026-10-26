@@ -150,12 +150,15 @@ static inline unsigned long get_trans_granule(void)
 #define __TLBI_RANGE_NUM(pages, scale)	\
 	((((pages) >> (5 * (scale) + 1)) & TLBI_RANGE_MASK) - 1)
 
-#define __repeat_tlbi_sync(op, arg...)						\
+#define __repeat_tlbi_sync(op, arg)						\
 do {										\
-	if (!cpus_have_const_cap(ARM64_WORKAROUND_REPEAT_TLBI))	\
-		break;								\
-	__tlbi(op, ##arg);							\
-	dsb(ish);								\
+	asm volatile(								\
+	ALTERNATIVE("nop\n			nop",				\
+		    "tlbi " #op ", %x0\n	dsb ish",			\
+		    ARM64_WORKAROUND_REPEAT_TLBI,				\
+		    CONFIG_ARM64_WORKAROUND_REPEAT_TLBI)			\
+	:									\
+	: "rZ" (arg));								\
 } while (0)
 
 /*
