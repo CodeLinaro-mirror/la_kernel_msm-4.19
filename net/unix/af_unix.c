@@ -2720,7 +2720,6 @@ unlock:
 
 static int unix_stream_read_skb(struct sock *sk, skb_read_actor_t recv_actor)
 {
-	struct sk_buff_head *queue = &sk->sk_receive_queue;
 	struct unix_sock *u = unix_sk(sk);
 	struct sk_buff *skb;
 	int err;
@@ -2728,33 +2727,29 @@ static int unix_stream_read_skb(struct sock *sk, skb_read_actor_t recv_actor)
 	if (unlikely(READ_ONCE(sk->sk_state) != TCP_ESTABLISHED))
 		return -ENOTCONN;
 
-	err = sock_error(sk);
-	if (err)
+	mutex_lock(&u->iolock);
+	skb = skb_recv_datagram(sk, MSG_DONTWAIT, &err);
+	mutex_unlock(&u->iolock);
+	if (!skb)
 		return err;
 
-	mutex_lock(&u->iolock);
-	spin_lock(&queue->lock);
-
-	skb = __skb_dequeue(queue);
-	if (!skb) {
-		spin_unlock(&queue->lock);
-		mutex_unlock(&u->iolock);
-		return -EAGAIN;
-	}
-
 #if IS_ENABLED(CONFIG_AF_UNIX_OOB)
-	if (skb == u->oob_skb) {
-		WRITE_ONCE(u->oob_skb, NULL);
-		spin_unlock(&queue->lock);
-		mutex_unlock(&u->iolock);
+	if (unlikely(skb == READ_ONCE(u->oob_skb))) {
+		bool drop = false;
 
-		kfree_skb_reason(skb, SKB_DROP_REASON_UNIX_SKIP_OOB);
-		return -EAGAIN;
+		spin_lock(&sk->sk_receive_queue.lock);
+		if (likely(skb == u->oob_skb)) {
+			WRITE_ONCE(u->oob_skb, NULL);
+			drop = true;
+		}
+		spin_unlock(&sk->sk_receive_queue.lock);
+
+		if (drop) {
+			kfree_skb_reason(skb, SKB_DROP_REASON_UNIX_SKIP_OOB);
+			return -EAGAIN;
+		}
 	}
 #endif
-
-	spin_unlock(&queue->lock);
-	mutex_unlock(&u->iolock);
 
 	return recv_actor(sk, skb);
 }
