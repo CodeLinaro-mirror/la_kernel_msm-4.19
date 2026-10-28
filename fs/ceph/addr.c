@@ -253,9 +253,8 @@ static void finish_netfs_read(struct ceph_osd_request *req)
 		subreq->transferred = err;
 		err = 0;
 	}
-	subreq->error = err;
 	trace_netfs_sreq(subreq, netfs_sreq_trace_io_progress);
-	netfs_read_subreq_terminated(subreq, false);
+	netfs_read_subreq_terminated(subreq, err, false);
 	iput(req->r_inode);
 	ceph_dec_osd_stopping_blocker(fsc->mdsc);
 }
@@ -315,9 +314,7 @@ static bool ceph_netfs_issue_op_inline(struct netfs_io_subrequest *subreq)
 
 	ceph_mdsc_put_request(req);
 out:
-	subreq->error = err;
-	trace_netfs_sreq(subreq, netfs_sreq_trace_io_progress);
-	netfs_read_subreq_terminated(subreq, false);
+	netfs_read_subreq_terminated(subreq, err, false);
 	return true;
 }
 
@@ -438,10 +435,8 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
 	ceph_osdc_start_request(req->r_osdc, req);
 out:
 	ceph_osdc_put_request(req);
-	if (err) {
-		subreq->error = err;
-		netfs_read_subreq_terminated(subreq, false);
-	}
+	if (err)
+		netfs_read_subreq_terminated(subreq, err, false);
 	doutc(cl, "%llx.%llx result %d\n", ceph_vinop(inode), err);
 }
 
