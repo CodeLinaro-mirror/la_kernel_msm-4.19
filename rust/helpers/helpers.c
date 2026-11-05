@@ -71,6 +71,7 @@
 #include "spinlock.c"
 #include "sync.c"
 #include "task.c"
+#include "time.c"
 #include "uaccess.c"
 #include "uio.c"
 #include "vmalloc.c"

@@ -4,7 +4,7 @@
 
 use core::{mem::MaybeUninit, ptr::NonNull};
 
-use crate::{content::DmaBufContent, THIS_MODULE};
+use crate::{content::DmaBufContent, poll::FileMonitor, THIS_MODULE};
 
 use kernel::{
     alloc::{AllocError, Flags},
@@ -26,7 +26,7 @@ use kernel::{
     uapi,
 };
 
-static WRAP_FOPS: AnonInodeFileVTable<Wrap> = AnonInodeFileVTable::new(&THIS_MODULE);
+pub(crate) static WRAP_FOPS: AnonInodeFileVTable<Wrap> = AnonInodeFileVTable::new(&THIS_MODULE);
 
 pub(crate) fn create_wrap_file(
     name: &CStr,
@@ -77,6 +77,15 @@ pub(crate) struct WrapInfo {
     num_pending_mmaps: usize,
     state: WrapState,
     num_mappable_refs: usize,
+    monitors: KVec<(Arc<FileMonitor>, usize)>,
+}
+
+impl Drop for WrapInfo {
+    fn drop(&mut self) {
+        for (filemon, slot) in core::mem::take(&mut self.monitors) {
+            _ = filemon.free_slot(slot);
+        }
+    }
 }
 
 impl WrapInfo {
@@ -89,13 +98,14 @@ impl WrapInfo {
             num_pending_mmaps: 0,
             state: WrapState::Available,
             num_mappable_refs: 0,
+            monitors: KVec::default(),
         }
     }
 
     fn get_valid_owner(&mut self) -> Option<&Task> {
         if let WrapOwner::Task(task) = &self.owner {
             if !task.has_mm() {
-                self.owner = WrapOwner::None;
+                self.reset_owner();
                 self.allow_guests = false;
             }
         };
@@ -112,6 +122,16 @@ impl WrapInfo {
             WrapOwner::Task(_task) => self.get_valid_owner().is_some(),
             WrapOwner::Device(_dev) => true,
         }
+    }
+
+    fn reset_owner(&mut self) {
+        self.owner = WrapOwner::None;
+        self.generate_event(uapi::WRAPFD_EVENT_UNOWN);
+    }
+
+    fn reset_vmafile(&mut self) {
+        self.vma_file = VmaFile::None;
+        self.generate_event(uapi::WRAPFD_EVENT_UNMAP);
     }
 
     fn owned_by_current_task(&mut self) -> bool {
@@ -172,7 +192,7 @@ impl WrapInfo {
         });
 
         if map_count == 0 && self.num_pending_mmaps == 0 {
-            self.vma_file = VmaFile::None;
+            self.reset_vmafile();
         }
 
         map_count + self.num_mappable_refs
@@ -206,7 +226,7 @@ impl WrapInfo {
         });
 
         if !is_mapped {
-            self.vma_file = VmaFile::None;
+            self.reset_vmafile();
         }
 
         is_mapped
@@ -240,6 +260,43 @@ impl WrapInfo {
         }
 
         Ok(())
+    }
+
+    pub(crate) fn get_slot(&self, filemon: &FileMonitor) -> Option<usize> {
+        self.monitors.iter().find_map(|(existing_filemon, slot)| {
+            (existing_filemon.as_ref() == filemon).then_some(*slot)
+        })
+    }
+
+    pub(crate) fn attach_monitor(&mut self, filemon: Arc<FileMonitor>, slot: usize) -> Result<()> {
+        if let Some(_entry) = self
+            .monitors
+            .iter()
+            .find(|(existing_filemon, _)| existing_filemon.as_ref() == filemon.as_ref())
+        {
+            return Err(EEXIST);
+        }
+
+        self.monitors.push((filemon, slot), GFP_KERNEL)?;
+
+        Ok(())
+    }
+
+    pub(crate) fn detach_monitor(&mut self, filemon: &FileMonitor) -> Result<()> {
+        let index = self
+            .monitors
+            .iter()
+            .position(|(existing_filemon, _)| existing_filemon.as_ref() == filemon)
+            .ok_or(EINVAL)?;
+
+        _ = self.monitors.remove(index);
+        Ok(())
+    }
+
+    fn generate_event(&self, event: u32) {
+        for (filemon, slot) in &self.monitors {
+            _ = filemon.generate_wrap_event(*slot, event);
+        }
     }
 }
 
@@ -345,6 +402,7 @@ impl Wrap {
         }
 
         guard.owner = WrapOwner::Task(ARef::from(current!().group_leader()));
+        guard.generate_event(uapi::WRAPFD_EVENT_OWN);
 
         Ok(0)
     }
@@ -356,7 +414,7 @@ impl Wrap {
             return Err(EBUSY);
         }
 
-        guard.owner = WrapOwner::None;
+        guard.reset_owner();
         guard.allow_guests = false;
 
         Ok(0)
@@ -409,9 +467,18 @@ impl Wrap {
 
         let (_use_guard, dmabuf) = {
             let mut guard = self.inner.lock();
-            let content = guard.check_accessible()?;
+            guard.generate_event(uapi::WRAPFD_EVENT_LOAD);
+
+            let content = match guard.check_accessible() {
+                Ok(content) => content,
+                Err(err) => {
+                    guard.generate_event(uapi::WRAPFD_EVENT_LOAD_DONE);
+                    return Err(err);
+                }
+            };
 
             if !content.is_writable() {
+                guard.generate_event(uapi::WRAPFD_EVENT_LOAD_DONE);
                 return Err(EACCES);
             }
 
@@ -419,7 +486,11 @@ impl Wrap {
             (self.begin_use(&mut guard), dmabuf)
         };
 
-        DmaBufContent::load(&dmabuf, localfile, file_offset, buf_offset, len)
+        let result = DmaBufContent::load(&dmabuf, localfile, file_offset, buf_offset, len);
+        self.inner
+            .lock()
+            .generate_event(uapi::WRAPFD_EVENT_LOAD_DONE);
+        result
     }
 
     fn rewrap(&self, user_slice: UserSlice) -> Result<u32> {
@@ -512,7 +583,6 @@ impl AnonInodeFileInterface for Wrap {
             let dmabuf = content.dmabuf.clone();
             (wrap.begin_use(&mut guard), dmabuf)
         };
-
         DmaBufContent::llseek(&dmabuf, offs, whence)
     }
 
@@ -598,6 +668,8 @@ impl AnonInodeFileInterface for Wrap {
 
             guard.vma_file = VmaFile::External(vma_file);
         }
+
+        guard.generate_event(uapi::WRAPFD_EVENT_MAP);
 
         Ok(())
     }
@@ -853,6 +925,7 @@ unsafe extern "C" fn rust_wrapfd_get_mappable(
         // We acquire an additional reference on `dmabuf` here that will be released in a matching
         // call to `wrapfd_put_mappable`.
         content.dmabuf.inc_ref();
+        guard.generate_event(uapi::WRAPFD_EVENT_MAP);
 
         // SAFETY: `mappable` is a valid, writable pointer to `struct wrapfd_mappable` per caller
         // contract.
@@ -915,6 +988,7 @@ unsafe extern "C" fn rust_wrapfd_put_mappable(
         unsafe {
             <DmaBuf as AlwaysRefCounted>::dec_ref(NonNull::from(&*content.dmabuf));
         }
+        guard.generate_event(uapi::WRAPFD_EVENT_UNMAP);
 
         guard.num_mappable_refs -= 1;
 
@@ -1026,7 +1100,7 @@ unsafe extern "C" fn rust_wrapfd_acquire_ownership(
     file: *mut bindings::file,
     dev: *mut bindings::device,
 ) -> ffi::c_int {
-    let result = with_wrap_helper(file, "wrapfd_get_ownership", |wrap| {
+    let result = with_wrap_helper(file, "wrapfd_acquire_ownership", |wrap| {
         if dev.is_null() {
             return Err(ENODEV);
         }
@@ -1054,7 +1128,7 @@ unsafe extern "C" fn rust_wrapfd_acquire_ownership(
         }
 
         guard.owner = WrapOwner::Device(device);
-
+        guard.generate_event(uapi::WRAPFD_EVENT_OWN);
         Ok(())
     });
 
@@ -1069,7 +1143,7 @@ unsafe extern "C" fn rust_wrapfd_release_ownership(
     file: *mut bindings::file,
     dev: *mut bindings::device,
 ) -> ffi::c_int {
-    let result = with_wrap_helper(file, "wrapfd_put_ownership", |wrap| {
+    let result = with_wrap_helper(file, "wrapfd_release_ownership", |wrap| {
         if dev.is_null() {
             return Err(ENODEV);
         }
@@ -1084,7 +1158,7 @@ unsafe extern "C" fn rust_wrapfd_release_ownership(
             return Err(EBUSY);
         }
 
-        guard.owner = WrapOwner::None;
+        guard.reset_owner();
 
         Ok(())
     });

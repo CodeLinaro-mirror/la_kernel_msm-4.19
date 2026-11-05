@@ -492,6 +492,11 @@ impl_frombytes! {
     uapi::wrapfd_get_state,
     uapi::wrapfd_load,
     uapi::wrapfd_rewrap,
+    uapi::wrapfd_add_monitors,
+    uapi::wrapfd_del_monitors,
+    uapi::wrapfd_event,
+    uapi::wrapfd_events,
+    uapi::wrapfd_monitor,
 }
 
 /// Types that can be viewed as an immutable slice of initialized bytes.
@@ -566,4 +571,9 @@ impl_asbytes! {
     uapi::wrapfd_get_state,
     uapi::wrapfd_load,
     uapi::wrapfd_rewrap,
+    uapi::wrapfd_add_monitors,
+    uapi::wrapfd_del_monitors,
+    uapi::wrapfd_event,
+    uapi::wrapfd_events,
+    uapi::wrapfd_monitor,
 }
