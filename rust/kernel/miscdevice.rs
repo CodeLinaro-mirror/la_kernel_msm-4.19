@@ -539,7 +539,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
 
         match T::poll(device, file, poll_table) {
             Ok(ret) => ret,
-            Err(err) => err.to_errno() as bindings::__poll_t,
+            Err(_err) => bindings::POLLERR,
         }
     }
 
