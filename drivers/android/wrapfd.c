@@ -2212,7 +2212,7 @@ static long process_monitors(struct file_monitor *file_mon,
 {
 	struct wrap_event_info *tmp = NULL;
 	struct wrapfd_monitor *arr;
-	__u64 *results;
+	__s64 *results;
 	long ret = 0;
 
 	if (!monitors->len || monitors->len > WRAPFD_MAX_NR_MONITORS)
@@ -2228,7 +2228,7 @@ static long process_monitors(struct file_monitor *file_mon,
 		goto free_arr;
 	}
 
-	if (copy_from_user(arr, (void __user *)monitors->arr,
+	if (copy_from_user(arr, u64_to_user_ptr(monitors->arr),
 			   monitors->len * sizeof(struct wrapfd_monitor))) {
 		ret = -EFAULT;
 		goto free_res;
@@ -2312,8 +2312,8 @@ unlock:
 		fdput(f);
 	}
 	kfree(tmp);
-	if (copy_to_user((void __user *)monitors->results, results,
-			 monitors->len * sizeof(__u64)))
+	if (copy_to_user(u64_to_user_ptr(monitors->results), results,
+			 monitors->len * sizeof(*results)))
 		ret = -EFAULT;
 free_res:
 	kfree(results);
@@ -2392,7 +2392,7 @@ static long wrapfd_dev_query_events(struct file *file, unsigned long arg)
 		atomic_set(&file_mon->events_pending, 0);
 	spin_unlock(&file_mon->event_lock);
 
-	if (copy_to_user((void __user *)events.arr, arr,
+	if (copy_to_user(u64_to_user_ptr(events.arr), arr,
 			 i * sizeof(struct wrapfd_event))) {
 		ret = -EFAULT;
 		goto free_arr;
