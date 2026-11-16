@@ -21,7 +21,7 @@ int rust_wrapfd_put_mappable(struct file *file, struct device *dev,
 int rust_wrapfd_add_listener(struct file *file, struct device *dev,
 			     const struct wrapfd_listener_operations *ops,
 			     void *param, void **handlep);
-int rust_wrapfd_del_listener(struct file *file, void *handle);
+int rust_wrapfd_del_listener(void *handle);
 int rust_wrapfd_acquire_ownership(struct file *file, struct device *dev);
 int rust_wrapfd_release_ownership(struct file *file, struct device *dev);
 

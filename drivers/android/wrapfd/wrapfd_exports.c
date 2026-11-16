@@ -40,9 +40,9 @@ int wrapfd_add_listener(struct file *file, struct device *dev,
 }
 EXPORT_SYMBOL_GPL(wrapfd_add_listener);
 
-int wrapfd_del_listener(struct file *file, void *handle)
+int wrapfd_del_listener(void *handle)
 {
-	return rust_wrapfd_del_listener(file, handle);
+	return rust_wrapfd_del_listener(handle);
 }
 EXPORT_SYMBOL_GPL(wrapfd_del_listener);
 
