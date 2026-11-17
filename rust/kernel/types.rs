@@ -492,11 +492,12 @@ impl_frombytes! {
     uapi::wrapfd_get_state,
     uapi::wrapfd_load,
     uapi::wrapfd_rewrap,
+    uapi::wrapfd_add_monitor,
     uapi::wrapfd_add_monitors,
+    uapi::wrapfd_del_monitor,
     uapi::wrapfd_del_monitors,
     uapi::wrapfd_event,
     uapi::wrapfd_events,
-    uapi::wrapfd_monitor,
     uapi::wrapfd_repopulate,
 }
 
@@ -576,5 +577,4 @@ impl_asbytes! {
     uapi::wrapfd_del_monitors,
     uapi::wrapfd_event,
     uapi::wrapfd_events,
-    uapi::wrapfd_monitor,
 }
