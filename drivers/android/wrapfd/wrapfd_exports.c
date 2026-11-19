@@ -58,6 +58,12 @@ int wrapfd_release_ownership(struct file *file, struct device *dev)
 }
 EXPORT_SYMBOL_GPL(wrapfd_release_ownership);
 
+bool is_wrapfd_file(struct file *file)
+{
+	return rust_is_wrapfd_file(file);
+}
+EXPORT_SYMBOL_GPL(is_wrapfd_file);
+
 #if IS_ENABLED(CONFIG_KUNIT)
 int create_wrapfd(int fd, int prot)
 {
