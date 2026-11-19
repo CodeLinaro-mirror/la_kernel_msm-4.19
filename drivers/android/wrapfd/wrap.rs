@@ -123,7 +123,6 @@ impl WrapInfo {
         if let WrapOwner::Task(task) = &self.owner {
             if !task.has_mm() {
                 self.reset_owner();
-                self.allow_guests = false;
             }
         };
 
@@ -143,6 +142,7 @@ impl WrapInfo {
 
     fn reset_owner(&mut self) {
         self.owner = WrapOwner::None;
+        self.allow_guests = false;
         self.generate_event(uapi::WRAPFD_EVENT_UNOWN);
     }
 
@@ -471,7 +471,6 @@ impl Wrap {
         }
 
         guard.reset_owner();
-        guard.allow_guests = false;
 
         Ok(0)
     }
