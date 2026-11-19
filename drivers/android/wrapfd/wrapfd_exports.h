@@ -25,6 +25,8 @@ int rust_wrapfd_del_listener(void *handle);
 int rust_wrapfd_acquire_ownership(struct file *file, struct device *dev);
 int rust_wrapfd_release_ownership(struct file *file, struct device *dev);
 bool rust_is_wrapfd_file(struct file *file);
+int rust_wrapfd_allow_guests(struct file *file, struct device *dev);
+int rust_wrapfd_prohibit_guests(struct file *file, struct device *dev);
 
 #if IS_ENABLED(CONFIG_KUNIT)
 int rust_create_wrapfd(int fd, int prot);

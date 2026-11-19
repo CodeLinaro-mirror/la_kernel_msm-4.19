@@ -64,6 +64,18 @@ bool is_wrapfd_file(struct file *file)
 }
 EXPORT_SYMBOL_GPL(is_wrapfd_file);
 
+int wrapfd_allow_guests(struct file *file, struct device *dev)
+{
+	return rust_wrapfd_allow_guests(file, dev);
+}
+EXPORT_SYMBOL_GPL(wrapfd_allow_guests);
+
+int wrapfd_prohibit_guests(struct file *file, struct device *dev)
+{
+	return rust_wrapfd_prohibit_guests(file, dev);
+}
+EXPORT_SYMBOL_GPL(wrapfd_prohibit_guests);
+
 #if IS_ENABLED(CONFIG_KUNIT)
 int create_wrapfd(int fd, int prot)
 {
