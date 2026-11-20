@@ -51499,6 +51499,10 @@ member {
   offset: 3136
 }
 member {
+  id: 0x31b9b00e
+  type_id: 0x49c8b028
+}
+member {
   id: 0x31bc782d
   type_id: 0x49df90a7
 }
@@ -131978,6 +131982,11 @@ member {
   offset: 5056
 }
 member {
+  id: 0x7c9b1a80
+  name: "haptic"
+  type_id: 0xcc7c60ee
+}
+member {
   id: 0xc5dbda47
   name: "hard_add_expires_seconds"
   type_id: 0xedf277ba
@@ -134055,6 +134064,11 @@ member {
   id: 0x1f443f36
   name: "hid"
   type_id: 0x4585663f
+}
+member {
+  id: 0xdedeb537
+  name: "hid_usage"
+  type_id: 0xe8034002
 }
 member {
   id: 0x666b6e12
@@ -144250,6 +144264,12 @@ member {
   type_id: 0x6d7f5ff6
   offset: 1920
   bitsize: 1
+}
+member {
+  id: 0x316096d5
+  name: "intensity"
+  type_id: 0xe8034002
+  offset: 48
 }
 member {
   id: 0x31cd18d3
@@ -214568,6 +214588,12 @@ member {
   offset: 16448
 }
 member {
+  id: 0x0d2d1198
+  name: "repeat_count"
+  type_id: 0xe8034002
+  offset: 64
+}
+member {
   id: 0x8b2e8815
   name: "repeat_key"
   type_id: 0x4585663f
@@ -218075,6 +218101,12 @@ member {
   name: "retries"
   type_id: 0x33756485
   offset: 512
+}
+member {
+  id: 0xa646e15d
+  name: "retrigger_period"
+  type_id: 0xe8034002
+  offset: 80
 }
 member {
   id: 0x7f86d402
@@ -264500,6 +264532,12 @@ member {
   offset: 256
 }
 member {
+  id: 0x0ba1a393
+  name: "vendor_id"
+  type_id: 0xe8034002
+  offset: 16
+}
+member {
   id: 0x0baf80d2
   name: "vendor_id"
   type_id: 0xe62ebf07
@@ -264587,6 +264625,12 @@ member {
   name: "vendor_verbs"
   type_id: 0x4e17f7d7
   offset: 9088
+}
+member {
+  id: 0x0f142526
+  name: "vendor_waveform_page"
+  type_id: 0xb3e7bac9
+  offset: 32
 }
 member {
   id: 0x2e0a0fbc
@@ -282382,6 +282426,15 @@ struct_union {
   }
 }
 struct_union {
+  id: 0x49c8b028
+  kind: UNION
+  definition {
+    bytesize: 12
+    member_id: 0x7c9b1a80
+    member_id: 0x52ad2439
+  }
+}
+struct_union {
   id: 0x49df90a7
   kind: UNION
   definition {
@@ -283098,6 +283151,7 @@ struct_union {
     member_id: 0x6eae7188
     member_id: 0x13c9453c
     member_id: 0x68c152e4
+    member_id: 0x31b9b00e
   }
 }
 struct_union {
@@ -319886,6 +319940,20 @@ struct_union {
     member_id: 0x9cf83c82
     member_id: 0x0bad70a4
     member_id: 0x8c39e7a9
+  }
+}
+struct_union {
+  id: 0xcc7c60ee
+  kind: STRUCT
+  name: "ff_haptic_effect"
+  definition {
+    bytesize: 12
+    member_id: 0xdedeb537
+    member_id: 0x0ba1a393
+    member_id: 0x0f142526
+    member_id: 0x316096d5
+    member_id: 0x0d2d1198
+    member_id: 0xa646e15d
   }
 }
 struct_union {
