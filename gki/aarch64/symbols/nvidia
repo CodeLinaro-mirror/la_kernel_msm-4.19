@@ -2154,6 +2154,7 @@
   media_device_init
   __media_device_register
   media_device_unregister
+  __media_device_usb_init
   media_entity_pads_init
   mem_alloc_profiling_key
   memcg_sockets_enabled_key
@@ -4311,11 +4312,14 @@
   __v4l2_ctrl_grab
   v4l2_ctrl_handler_free
   v4l2_ctrl_handler_init_class
+  v4l2_ctrl_handler_log_status
   v4l2_ctrl_handler_setup
   v4l2_ctrl_log_status
   v4l2_ctrl_new_custom
   v4l2_ctrl_new_std
   v4l2_ctrl_new_std_menu
+  v4l2_ctrl_query_fill
+  v4l2_ctrl_radio_filter
   __v4l2_ctrl_s_ctrl
   v4l2_ctrl_subscribe_event
   v4l2_device_disconnect
@@ -4334,6 +4338,7 @@
   v4l2_fh_is_singular
   v4l2_fh_open
   v4l2_format_info
+  v4l2_mc_create_media_graph
   v4l2_subdev_init
   v4l2_type_names
   __var_waitqueue
