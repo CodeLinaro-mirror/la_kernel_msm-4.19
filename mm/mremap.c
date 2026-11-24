@@ -410,8 +410,7 @@ static bool move_huge_pud(struct vm_area_struct *vma, unsigned long old_addr,
 		spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
 
 	/* Clear the pud */
-	pud = *old_pud;
-	pud_clear(old_pud);
+	pud = pudp_huge_get_and_clear(mm, old_addr, old_pud);
 
 	VM_BUG_ON(!pud_none(*new_pud));
 
@@ -822,7 +821,14 @@ static unsigned long move_vma(struct vm_area_struct *vma,
 	}
 
 	if (is_vm_hugetlb_page(vma)) {
+		/*
+		 * Rmap walks might still find this VMA and take the lock
+		 * inside the reservation map for __vma_private_lock(). Don't clear
+		 * the reservation map while that is possible.
+		 */
+		i_mmap_lock_write(vma->vm_file->f_mapping);
 		clear_vma_resv_huge_pages(vma);
+		i_mmap_unlock_write(vma->vm_file->f_mapping);
 	}
 
 	/* Conceal VM_ACCOUNT so old reservation is not undone */
