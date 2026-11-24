@@ -215,6 +215,8 @@ int btmtk_setup_firmware_79xx(struct hci_dev *hdev, const char *fwname,
 		return err;
 	}
 
+	bt_dev_info(hdev, "Loading BT firmware: %s", fwname);
+
 	err = btmtk_fw_validate_layout(hdev, fw, &section_num);
 	if (err < 0)
 		goto err_release_fw;
@@ -223,8 +225,8 @@ int btmtk_setup_firmware_79xx(struct hci_dev *hdev, const char *fwname,
 	fw_bin_ptr = fw_ptr;
 	hdr = (struct btmtk_patch_header *)fw_ptr;
 
-	bt_dev_info(hdev, "HW/SW Version: 0x%04x%04x, Build Time: %s",
-		    le16_to_cpu(hdr->hwver), le16_to_cpu(hdr->swver), hdr->datetime);
+	bt_dev_info(hdev, "BT HW ver: 0x%04x, SW ver: 0x%04x, Build Time: %.16s",
+		    dev_id & 0xffff, le16_to_cpu(hdr->swver), hdr->datetime);
 
 	for (i = 0; i < section_num; i++) {
 		first_block = 1;
@@ -1080,12 +1082,8 @@ static int btmtk_isopkt_pad(struct hci_dev *hdev, struct sk_buff *skb)
 	if (skb->len > MTK_ISO_THRESHOLD)
 		return -EINVAL;
 
-	if (skb_pad(skb, MTK_ISO_THRESHOLD - skb->len))
-		return -ENOMEM;
-
-	__skb_put(skb, MTK_ISO_THRESHOLD - skb->len);
-
-	return 0;
+	/* On error, the skb is freed by hci_send_frame(). */
+	return __skb_put_padto(skb, MTK_ISO_THRESHOLD, false);
 }
 
 static int __set_mtk_intr_interface(struct hci_dev *hdev)
