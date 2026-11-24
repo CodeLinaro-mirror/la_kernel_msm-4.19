@@ -74,7 +74,7 @@ impl WrapFdDevice {
     }
 }
 
-#[cfg(CONFIG_ANDROID_WRAPFD_KUNIT_TEST)]
+#[cfg(CONFIG_KUNIT)]
 #[export]
 /// Wraps the dma-buf `fd` like `WRAPFD_DEV_IOC_WRAP` does, for the wrapfd KUnit test.
 ///
@@ -83,7 +83,7 @@ impl WrapFdDevice {
 /// # Safety
 ///
 /// Must be called from a task with a file table, the new wrapfd is installed in it.
-unsafe extern "C" fn create_wrapfd(
+unsafe extern "C" fn rust_create_wrapfd(
     fd: kernel::ffi::c_int,
     prot: kernel::ffi::c_int,
 ) -> kernel::ffi::c_int {

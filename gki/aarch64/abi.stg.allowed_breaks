@@ -360,4 +360,8 @@ type 'struct pkvm_module_ops' changed
   member 'u64 __kabi_reserved6' was removed
   member 'union { int(* host_device_manage_context)(u64, u32, enum pkvm_device_context_op); struct { u64 __kabi_reserved6; }; union { }; }' was added
 
+type 'struct ff_effect' changed
+  member changed from 'union { struct ff_constant_effect constant; struct ff_ramp_effect ramp; struct ff_periodic_effect periodic; struct ff_condition_effect condition[2]; struct ff_rumble_effect rumble; } u' to 'union { struct ff_constant_effect constant; struct ff_ramp_effect ramp; struct ff_periodic_effect periodic; struct ff_condition_effect condition[2]; struct ff_rumble_effect rumble; union { struct ff_haptic_effect haptic; unsigned char __kabi_ignored1; }; } u'
+    type changed from 'union { struct ff_constant_effect constant; struct ff_ramp_effect ramp; struct ff_periodic_effect periodic; struct ff_condition_effect condition[2]; struct ff_rumble_effect rumble; }' to 'union { struct ff_constant_effect constant; struct ff_ramp_effect ramp; struct ff_periodic_effect periodic; struct ff_condition_effect condition[2]; struct ff_rumble_effect rumble; union { struct ff_haptic_effect haptic; unsigned char __kabi_ignored1; }; }'
+      member 'union { struct ff_haptic_effect haptic; unsigned char __kabi_ignored1; }' was added
 
