@@ -2549,7 +2549,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
 			if (!org_mount_opt.s_qf_names[i]) {
 				for (j = 0; j < i; j++)
 					kfree(org_mount_opt.s_qf_names[j]);
-				return -ENOMEM;
+				err = -ENOMEM;
+				goto restore_holder;
 			}
 		} else {
 			org_mount_opt.s_qf_names[i] = NULL;
@@ -2824,6 +2825,9 @@ restore_opts:
 	sbi->mount_opt = org_mount_opt;
 	sb->s_flags = old_sb_flags;
 
+#ifdef CONFIG_QUOTA
+restore_holder:
+#endif
 	sbi->umount_lock_holder = NULL;
 	return err;
 }
