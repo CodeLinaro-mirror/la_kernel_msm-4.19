@@ -561,6 +561,7 @@
   drm_atomic_get_crtc_state
   drm_atomic_get_new_connector_for_encoder
   drm_atomic_get_new_private_obj_state
+  drm_atomic_get_old_connector_for_encoder
   drm_atomic_get_old_private_obj_state
   drm_atomic_get_private_obj_state
   drm_atomic_helper_bridge_destroy_state
@@ -680,6 +681,10 @@
   drm_encoder_init
   __drm_err
   drm_fdinfo_print_size
+  drm_flip_work_cleanup
+  drm_flip_work_commit
+  drm_flip_work_init
+  drm_flip_work_queue
   drm_format_info
   drm_format_info_bpp
   drm_gem_begin_shadow_fb_access
@@ -1244,6 +1249,8 @@
   ktime_get_seconds
   ktime_get_ts64
   ktime_get_with_offset
+  kunit_hooks
+  kunit_running
   kvfree
   kvfree_call_rcu
   __kvmalloc_node_noprof
@@ -2561,6 +2568,7 @@
   wait_for_completion_interruptible_timeout
   wait_for_completion_killable
   wait_for_completion_timeout
+  wait_woken
   __wake_up
   wake_up_bit
   __wake_up_locked
@@ -2574,12 +2582,15 @@
   watchdog_set_restart_priority
   widget_in_list
   wireless_nlevent_flush
+  woken_wake_function
+  work_busy
   ww_mutex_lock
   ww_mutex_lock_interruptible
   ww_mutex_trylock
   ww_mutex_unlock
   __xa_alloc
   xa_destroy
+  __xa_erase
   xa_erase
   xa_find
   xa_find_after
