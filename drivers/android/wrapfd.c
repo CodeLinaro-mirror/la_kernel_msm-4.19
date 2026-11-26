@@ -1792,7 +1792,7 @@ static int wrap_file_repopulate(struct wrapfd_repopulate *wrapfd_repopulate)
 
 	f = fdget(wrapfd_repopulate->wrapfd);
 	file = f.file;
-	if (!file || file->f_op != &wrap_fops) {
+	if (!is_wrapfd_file(file)) {
 		ret = -EBADF;
 		goto put_file;
 	}
@@ -2000,7 +2000,7 @@ int wrapfd_get_mappable(struct file *file, struct device *dev,
 	if (!dev)
 		return -ENODEV;
 
-	if (!file || file->f_op != &wrap_fops)
+	if (!is_wrapfd_file(file))
 		return -EBADF;
 
 	if (!mappable)
@@ -2053,7 +2053,7 @@ int wrapfd_put_mappable(struct file *file, struct device *dev,
 	if (!dev)
 		return -ENODEV;
 
-	if (!file || file->f_op != &wrap_fops)
+	if (!is_wrapfd_file(file))
 		return -EBADF;
 
 	if (!mappable)
@@ -2089,7 +2089,7 @@ int wrapfd_acquire_ownership(struct file *file, struct device *dev)
 	if (!dev)
 		return -ENODEV;
 
-	if (!file || file->f_op != &wrap_fops)
+	if (!is_wrapfd_file(file))
 		return -EBADF;
 
 	ctx = file->private_data;
@@ -2132,7 +2132,7 @@ int wrapfd_release_ownership(struct file *file, struct device *dev)
 	if (!dev)
 		return -ENODEV;
 
-	if (!file || file->f_op != &wrap_fops)
+	if (!is_wrapfd_file(file))
 		return -EBADF;
 
 	ctx = file->private_data;
@@ -2174,7 +2174,7 @@ int wrapfd_add_listener(struct file *file, struct device *dev,
 	if (WARN_ON(!dev))
 		return -ENODEV;
 
-	if (!file || file->f_op != &wrap_fops)
+	if (!is_wrapfd_file(file))
 		return -EBADF;
 
 	if (!ops || !ops->on_content_release || !handlep)
@@ -2278,6 +2278,12 @@ drop_ref:
 }
 EXPORT_SYMBOL_GPL(wrapfd_del_listener);
 
+bool is_wrapfd_file(struct file *file)
+{
+	return file && file->f_op == &wrap_fops;
+}
+EXPORT_SYMBOL_GPL(is_wrapfd_file);
+
 static const struct file_operations wrap_fops = {
 	.owner		= THIS_MODULE,
 	.llseek		= wrap_llseek,
@@ -2347,7 +2353,7 @@ static __s64 add_monitor(struct file_monitor *file_mon, struct wrapfd_add_monito
 
 	f = fdget(monitor->fd);
 	file = f.file;
-	if (!file || file->f_op != &wrap_fops) {
+	if (!is_wrapfd_file(file)) {
 		fdput(f);
 		return -EBADF;
 	}
