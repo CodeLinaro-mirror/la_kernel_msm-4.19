@@ -275697,6 +275697,13 @@ function {
   parameter_id: 0x0e2680c2
 }
 function {
+  id: 0x131a3956
+  return_type_id: 0x48b5725f
+  parameter_id: 0x0ca27481
+  parameter_id: 0x295c7202
+  parameter_id: 0x3e10b518
+}
+function {
   id: 0x1327a0fb
   return_type_id: 0x48b5725f
   parameter_id: 0x0effc5a1
@@ -338290,6 +338297,15 @@ elf_symbol {
   full_name: "ucsi_set_drvdata"
 }
 elf_symbol {
+  id: 0xdd85dd54
+  name: "ucsi_suspend"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x7db7b488
+  type_id: 0x966d72df
+  full_name: "ucsi_suspend"
+}
+elf_symbol {
   id: 0x87b53a0c
   name: "ucsi_sync_control_common"
   is_defined: true
@@ -342243,6 +342259,15 @@ elf_symbol {
   full_name: "xt_unregister_match"
 }
 elf_symbol {
+  id: 0xe6ddaeb3
+  name: "xt_unregister_table_pre_exit"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x43ab0047
+  type_id: 0x131a3956
+  full_name: "xt_unregister_table_pre_exit"
+}
+elf_symbol {
   id: 0x73bc531e
   name: "xt_unregister_template"
   is_defined: true
@@ -345889,6 +345914,7 @@ interface {
   symbol_id: 0x74041438
   symbol_id: 0xbf0e7081
   symbol_id: 0xe750d0b7
+  symbol_id: 0xdd85dd54
   symbol_id: 0x87b53a0c
   symbol_id: 0x9cefccb0
   symbol_id: 0x70d26df0
@@ -346328,6 +346354,7 @@ interface {
   symbol_id: 0x7a3f2cd6
   symbol_id: 0xd44eeafd
   symbol_id: 0x807b9318
+  symbol_id: 0xe6ddaeb3
   symbol_id: 0x73bc531e
   symbol_id: 0x2407d2bf
   symbol_id: 0x52ed8956
