@@ -127,3 +127,7 @@
   typec_register_plug
   typec_unregister_cable
   typec_unregister_plug
+  console_suspend
+  console_resume
+  console_srcu_read_lock
+  console_srcu_read_unlock

@@ -418179,6 +418179,24 @@ elf_symbol {
   full_name: "console_set_on_cmdline"
 }
 elf_symbol {
+  id: 0xffb0f359
+  name: "console_srcu_read_lock"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x7851be11
+  type_id: 0x9d80e32f
+  full_name: "console_srcu_read_lock"
+}
+elf_symbol {
+  id: 0x532a12c4
+  name: "console_srcu_read_unlock"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xe0ef2fe4
+  type_id: 0x09506558
+  full_name: "console_srcu_read_unlock"
+}
+elf_symbol {
   id: 0x5948b88e
   name: "console_suspend"
   is_defined: true
@@ -484492,6 +484510,8 @@ interface {
   symbol_id: 0x10e14b48
   symbol_id: 0x81aa2ce7
   symbol_id: 0x406ac226
+  symbol_id: 0xffb0f359
+  symbol_id: 0x532a12c4
   symbol_id: 0x5948b88e
   symbol_id: 0x85d79e5f
   symbol_id: 0xf9f01d9c
