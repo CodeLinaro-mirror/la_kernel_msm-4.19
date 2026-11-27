@@ -1565,6 +1565,9 @@
   sysfs_add_file_to_group
   sysfs_remove_file_from_group
 
+# required by analogix_dp.ko
+  drm_atomic_get_old_connector_for_encoder
+
 # required by aspm_ext.ko
   pci_find_ext_capability
 
@@ -1719,8 +1722,89 @@
   mmc_cqe_request_done
   mmc_hw_reset
 
+# required by display-connector.ko
+  drm_bridge_put
+  drm_probe_ddc
+
 # required by dm9601.ko
   mii_link_ok
+
+# required by drm_display_helper.ko
+  cec_s_conn_info
+  cec_transmit_done_ts
+  _copy_from_iter
+  _copy_to_iter
+  drm_atomic_get_new_private_obj_state
+  drm_atomic_get_old_private_obj_state
+  drm_atomic_get_private_obj_state
+  __drm_atomic_helper_private_obj_duplicate_state
+  drm_atomic_private_obj_fini
+  drm_atomic_private_obj_init
+  drm_bridge_hpd_disable
+  drm_bridge_hpd_enable
+  drm_bridge_is_panel
+  drm_connector_cec_phys_addr_invalidate
+  drm_connector_cec_phys_addr_set
+  drm_connector_dynamic_register
+  __drm_crtc_commit_free
+  drm_crtc_commit_wait
+  drm_crtc_wait_one_vblank
+  drm_display_mode_from_cea_vic
+  drm_edid_dup
+  drm_edid_duplicate
+  drm_edid_get_monitor_name
+  drm_edid_read
+  drm_hdmi_connector_get_output_format_name
+  drm_kms_helper_connector_hotplug_event
+  drmm_connector_hdmi_init
+  drmm_connector_init
+  drmm_kmalloc
+  drm_panel_bridge_set_orientation
+  __drm_printfn_dbg
+  drm_sysfs_connector_property_event
+  fixed_size_llseek
+  guid_gen
+  guid_null
+  hdmi_drm_infoframe_init
+  hdmi_spd_infoframe_init
+  init_wait_var_entry
+  iov_iter_revert
+  __var_waitqueue
+  wake_up_var
+
+# required by drm_dma_helper.ko
+  dma_mmap_pages
+  drm_atomic_helper_damage_iter_init
+  drm_atomic_helper_damage_iter_next
+  drm_format_info_block_height
+  drm_format_info_block_width
+  drm_gem_create_mmap_offset
+  drm_gem_fb_get_obj
+  drm_gem_private_object_init
+
+# required by drm_dp_aux_bus.ko
+  device_for_each_child_reverse
+  dev_pm_domain_attach
+  of_device_modalias
+  of_device_uevent_modalias
+
+# required by dw-dp.ko
+  __drm_atomic_helper_bridge_duplicate_state
+
+# required by dw-hdmi-qp-hdcp.ko
+  device_add_groups
+  device_remove_groups
+
+# required by dw-hdmi-qp.ko
+  hdmi_avi_infoframe_pack_only
+
+# required by dw-hdmi.ko
+  drm_connector_attach_hdr_output_metadata_property
+  drm_connector_attach_max_bpc_property
+
+# required by dw-mipi-dsi2.ko
+  devm_drm_of_get_bridge
+  mipi_dsi_packet_format_is_short
 
 # required by dw_mmc-rockchip.ko
   clk_get_phase
@@ -2006,6 +2090,25 @@
   __request_percpu_irq
   wait_for_completion_killable
 
+# required by panel-edp.ko
+  drm_edid_get_panel_id
+  drm_edid_match
+  drm_edid_read_base_block
+
+# required by panel-simple.ko
+  drm_bus_flags_from_videomode
+  drm_of_lvds_get_data_mapping
+  mipi_dsi_bus_type
+  mipi_dsi_compression_mode
+  mipi_dsi_dcs_get_display_brightness
+  mipi_dsi_dcs_set_display_brightness
+  mipi_dsi_dcs_write_buffer
+  mipi_dsi_driver_register_full
+  mipi_dsi_driver_unregister
+  mipi_dsi_generic_write
+  mipi_dsi_picture_parameter_set
+  platform_bus_type
+
 # required by pcie-dw-rockchip.ko
   debugfs_create_devm_seqfile
   device_release_driver
@@ -2096,6 +2199,10 @@
   devm_rc_allocate_device
   devm_rc_register_device
   __ndelay
+
+# required by pwm_bl.ko
+  backlight_device_register
+  backlight_device_unregister
 
 # required by pwrseq_simple.ko
   bitmap_alloc
@@ -2314,6 +2421,193 @@
   thermal_zone_device_priv
   thermal_zone_device_update
 
+# required by rockchipdrm.ko
+  component_add
+  component_bind_all
+  component_compare_dev
+  component_compare_of
+  component_del
+  component_master_add_with_match
+  component_master_del
+  component_master_is_bound
+  component_match_add_release
+  component_unbind_all
+  devm_i2c_add_adapter
+  devm_of_phy_get_by_index
+  driver_find_device
+  drm_atomic_add_encoder_bridges
+  drm_atomic_bridge_chain_check
+  drm_atomic_commit
+  drm_atomic_get_new_crtc_for_encoder
+  drm_atomic_get_old_crtc_for_encoder
+  drm_atomic_get_plane_state
+  drm_atomic_helper_check
+  drm_atomic_helper_check_plane_state
+  drm_atomic_helper_cleanup_planes
+  drm_atomic_helper_commit
+  drm_atomic_helper_commit_hw_done
+  drm_atomic_helper_commit_modeset_disables
+  drm_atomic_helper_commit_modeset_enables
+  drm_atomic_helper_commit_planes
+  __drm_atomic_helper_connector_destroy_state
+  __drm_atomic_helper_connector_duplicate_state
+  __drm_atomic_helper_connector_reset
+  __drm_atomic_helper_crtc_destroy_state
+  __drm_atomic_helper_crtc_duplicate_state
+  __drm_atomic_helper_disable_plane
+  drm_atomic_helper_duplicate_state
+  drm_atomic_helper_fake_vblank
+  drm_atomic_helper_page_flip
+  __drm_atomic_helper_plane_destroy_state
+  __drm_atomic_helper_plane_duplicate_state
+  __drm_atomic_helper_plane_reset
+  drm_atomic_helper_set_config
+  drm_atomic_helper_shutdown
+  drm_atomic_helper_swap_state
+  drm_atomic_helper_wait_for_vblanks
+  drm_atomic_set_crtc_for_connector
+  drm_atomic_set_crtc_for_plane
+  drm_atomic_set_fb_for_plane
+  drm_atomic_set_mode_for_crtc
+  drm_atomic_state_alloc
+  __drm_atomic_state_free
+  drm_bridge_chain_mode_set
+  drm_connector_attach_vrr_capable_property
+  drm_connector_helper_hpd_irq_event
+  drm_connector_list_update
+  drm_connector_set_path_property
+  drm_connector_set_vrr_capable_property
+  drm_crtc_cleanup
+  drm_crtc_enable_color_mgmt
+  drm_crtc_from_index
+  drm_crtc_handle_vblank
+  drm_crtc_init_with_planes
+  drm_crtc_send_vblank_event
+  drm_crtc_vblank_count
+  drm_crtc_vblank_get
+  drm_crtc_vblank_off
+  drm_crtc_vblank_on
+  drm_crtc_vblank_put
+  drm_debugfs_create_files
+  drm_debugfs_remove_files
+  drm_dev_set_dma_dev
+  drm_edid_read_custom
+  drm_encoder_cleanup
+  drm_encoder_init
+  drm_event_reserve_init_locked
+  drm_flip_work_cleanup
+  drm_flip_work_commit
+  drm_flip_work_init
+  drm_flip_work_queue
+  drm_format_info
+  drm_format_info_bpp
+  drm_format_info_min_pitch
+  drm_framebuffer_cleanup
+  drm_framebuffer_init
+  drm_framebuffer_lookup
+  drm_gem_dmabuf_export
+  drm_gem_dmabuf_mmap
+  drm_gem_dmabuf_release
+  drm_gem_dmabuf_vmap
+  drm_gem_dmabuf_vunmap
+  drm_gem_fb_afbc_init
+  drm_gem_fb_create_handle
+  drm_gem_fb_init_with_funcs
+  drm_gem_map_attach
+  drm_gem_map_detach
+  drm_gem_map_dma_buf
+  drm_gem_unmap_dma_buf
+  drm_helper_mode_fill_fb_struct
+  drm_kms_helper_poll_enable
+  drm_kms_helper_poll_fini
+  drm_kms_helper_poll_init
+  drm_mm_init
+  drm_mm_insert_node_in_range
+  drmm_mode_config_init
+  drm_mm_print
+  drm_mm_remove_node
+  drm_mm_reserve_node
+  drm_mm_takedown
+  drm_mode_config_helper_resume
+  drm_mode_config_helper_suspend
+  drm_mode_config_reset
+  drm_mode_create_hdmi_colorspace_property
+  drm_mode_create_tv_properties_legacy
+  drm_mode_crtc_set_gamma_size
+  drm_mode_get_hv_timing
+  drm_mode_object_get
+  drm_mode_set_crtcinfo
+  drm_modeset_lock_all
+  drm_modeset_unlock_all
+  drm_mode_sort
+  drm_mode_validate_driver
+  drm_mode_validate_size
+  drm_mode_validate_ycbcr420
+  drm_of_component_match_add
+  drm_of_crtc_port_mask
+  drm_of_encoder_active_endpoint
+  drm_panel_init
+  drm_plane_cleanup
+  drm_plane_create_alpha_property
+  drm_plane_create_blend_mode_property
+  drm_plane_create_color_properties
+  drm_plane_create_rotation_property
+  drm_plane_create_scaling_filter_property
+  drm_plane_create_zpos_property
+  __drm_printfn_seq_file
+  drm_property_blob_get
+  drm_property_blob_put
+  drm_property_create
+  drm_property_create_bitmask
+  drm_property_create_blob
+  drm_property_create_bool
+  drm_property_create_object
+  drm_property_create_range
+  drm_property_destroy
+  drm_property_lookup_blob
+  drm_property_replace_blob
+  __drm_puts_seq_file
+  drm_rect_calc_hscale
+  drm_rect_calc_vscale
+  drm_rect_intersect
+  drm_self_refresh_helper_cleanup
+  drm_self_refresh_helper_init
+  drm_send_event_locked
+  drm_simple_encoder_init
+  drm_universal_plane_init
+  drm_vblank_init
+  drm_writeback_connector_init
+  drm_writeback_queue_job
+  drm_writeback_signal_completion
+  free_reserved_page
+  fwnode_get_name
+  hdmi_drm_infoframe_pack_only
+  iommu_domain_free
+  iommu_paging_domain_alloc_flags
+  irq_set_irqchip_state
+  kthread_cancel_delayed_work_sync
+  kthread_delayed_work_timer_fn
+  kthread_queue_delayed_work
+  memblock_free
+  memchr_inv
+  of_clk_set_defaults
+  of_fwnode_ops
+  of_get_next_parent
+  of_graph_get_port_by_id
+  of_graph_get_remote_endpoint
+  of_graph_get_remote_port
+  phy_mipi_dphy_get_default_config
+  platform_find_device_by_driver
+  __platform_register_drivers
+  platform_unregister_drivers
+  prot_ns_shared
+  rsi_present
+  sched_set_fifo_low
+  sort
+  sysfs_notify
+  video_firmware_drivers_only
+  __vmalloc_noprof
+
 # required by rtc-rk808.ko
   rtc_time64_to_tm
   rtc_update_irq
@@ -2362,6 +2656,9 @@
   __scsi_print_sense
   scsi_register_interface
   sdev_prefix_printk
+
+# required by sii902x.ko
+  hdmi_avi_infoframe_pack
 
 # required by smsc.ko
   devm_clk_get_optional_enabled_with_rate
@@ -2613,3 +2910,75 @@
   usb_poison_anchored_urbs
   usb_put_intf
   usb_unanchor_urb
+
+# required by valhall_kbase.ko
+  __bitmap_equal
+  __bitmap_or
+  __bitmap_weight
+  complete_all
+  debugfs_create_bool
+  devfreq_add_device
+  devfreq_cooling_em_register
+  devfreq_cooling_unregister
+  devfreq_remove_device
+  dev_pm_opp_find_freq_exact
+  dma_fence_default_wait
+  dma_fence_remove_callback
+  downgrade_write
+  down_read_trylock
+  dump_stack
+  find_get_pid
+  find_vma_intersection
+  __folio_lock
+  freezer_active
+  freezing_slow_path
+  generic_file_llseek
+  get_file_active
+  get_user_pages
+  get_user_pages_fast
+  hrtimer_active
+  hrtimer_setup_on_stack
+  iomem_resource
+  __kfifo_out_peek
+  kobject_del
+  kstrndup
+  kstrtobool_from_user
+  ktime_get_raw
+  ktime_get_raw_ts64
+  memchr
+  of_property_read_variable_u64_array
+  param_ops_byte
+  param_set_uint_minmax
+  percpu_counter_add_batch
+  percpu_counter_batch
+  pin_user_pages_remote
+  __put_cred
+  rb_first
+  rb_prev
+  rb_replace_node
+  __refrigerator
+  register_oom_notifier
+  __release_region
+  remap_vmalloc_range
+  __request_region
+  __seq_open_private
+  seq_release_private
+  set_freezable
+  shmem_file_setup
+  shrinker_free
+  simple_open
+  static_key_slow_inc
+  strcspn
+  _totalram_pages
+  __traceiter_gpu_mem_total
+  trace_output_call
+  __tracepoint_gpu_mem_total
+  trace_print_flags_seq
+  try_module_get
+  unlock_page
+  unmap_mapping_range
+  unpin_user_page
+  unregister_oom_notifier
+  vmalloc_user_noprof
+  vmf_insert_pfn_prot
+  vm_unmapped_area
