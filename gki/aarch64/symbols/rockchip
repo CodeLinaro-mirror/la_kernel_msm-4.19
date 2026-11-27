@@ -1553,3 +1553,419 @@
   xa_find
   xa_find_after
   xa_load
+
+# required by act8865-regulator.ko
+  regulator_set_pull_down_regmap
+
+# required by bq25890_charger.ko
+  devm_regmap_field_bulk_alloc
+  power_supply_get_property_from_supplier
+
+# required by clk-link.ko
+  pm_clk_add
+
+# required by clk-out.ko
+  __clk_hw_register_gate
+  of_clk_parent_fill
+
+# required by clk-pwm.ko
+  pwm_get_state_hw
+
+# required by clk-rk3576.ko
+  syscon_regmap_lookup_by_compatible
+
+# required by clk-rockchip-regmap.ko
+  clk_hw_get_num_parents
+  clk_hw_get_parent_by_index
+  divider_recalc_rate
+  divider_round_rate_parent
+
+# required by clk-rockchip.ko
+  clk_divider_ops
+  clk_divider_ro_ops
+  clk_fixed_factor_ops
+  clk_fractional_divider_general_approximation
+  clk_fractional_divider_ops
+  clk_hw_register
+  clk_hw_register_composite
+  clk_hw_round_rate
+  clk_hw_unregister
+  clk_hw_unregister_composite
+  clk_mux_ops
+  clk_mux_ro_ops
+  clk_register_divider_table
+  clk_register_fixed_factor
+  clk_register_gate
+  clk_register_mux_table
+  devm_pm_clk_create
+  pm_clk_remove_clk
+  regmap_test_bits
+  reset_controller_register
+
+# required by clk-scmi.ko
+  clk_hw_set_rate_range
+  of_clk_hw_onecell_get
+  scmi_driver_register
+  scmi_driver_unregister
+
+# required by cpufreq-dt.ko
+  cpufreq_boost_set_sw
+  cpufreq_generic_frequency_table_verify
+  cpufreq_generic_get
+  cpufreq_register_driver
+  cpufreq_unregister_driver
+  dev_pm_opp_free_cpufreq_table
+  dev_pm_opp_get_max_transition_latency
+  dev_pm_opp_get_sharing_cpus
+  dev_pm_opp_get_suspend_opp_freq
+  dev_pm_opp_init_cpufreq_table
+  dev_pm_opp_of_cpumask_add_table
+  dev_pm_opp_of_cpumask_remove_table
+  dev_pm_opp_of_register_em
+  dev_pm_opp_set_sharing_cpus
+
+# required by cpufreq_ondemand.ko
+  cpufreq_cpu_get_raw
+  cpufreq_dbs_governor_exit
+  cpufreq_dbs_governor_init
+  cpufreq_dbs_governor_limits
+  cpufreq_dbs_governor_start
+  cpufreq_dbs_governor_stop
+  cpufreq_table_index_unsorted
+  dbs_update
+  get_cpu_idle_time_us
+  gov_update_cpu_data
+  sampling_rate_store
+
+# required by dw_wdt.ko
+  watchdog_init_timeout
+  watchdog_register_device
+  watchdog_set_restart_priority
+  watchdog_unregister_device
+
+# required by fan53555.ko
+  i2c_get_match_data
+
+# required by fiq_debugger.ko
+  kernel_restart
+  register_console
+  __tty_alloc_driver
+  tty_driver_kref_put
+  tty_flip_buffer_push
+  __tty_insert_flip_string_flags
+  tty_port_close
+  tty_port_init
+  tty_port_open
+  tty_port_register_device
+  tty_port_tty_wakeup
+  tty_register_driver
+  tty_std_termios
+
+# required by gpio-rockchip.ko
+  gpiochip_add_data_with_key
+  gpiochip_relres_irq
+  gpiochip_remove
+  gpiochip_reqres_irq
+  handle_edge_irq
+  __irq_alloc_domain_generic_chips
+  irq_force_affinity
+  irq_gc_ack_set_bit
+  irq_gc_mask_clr_bit
+  irq_gc_mask_set_bit
+  irq_gc_set_wake
+  irq_generic_chip_ops
+  irq_get_domain_generic_chip
+  of_cpu_node_to_id
+  of_pinctrl_get
+
+# required by io-domain.ko
+  _dev_crit
+
+# required by magicsched.ko
+  android_rvh_probe_register
+  available_idle_cpu
+  __cpu_active_mask
+  cpu_scale
+  find_task_by_vpid
+  find_vpid
+  get_task_pid
+  kobj_sysfs_ops
+  on_each_cpu_cond_mask
+  pid_vnr
+  _printk_deferred
+  raw_spin_rq_lock_nested
+  raw_spin_rq_unlock
+  resched_curr
+  root_task_group
+  runqueues
+  __sched_proxy_exec
+  __scx_enabled
+  sysfs_create_groups
+  sysfs_remove_groups
+  __traceiter_android_rvh_check_preempt_wakeup_fair
+  __traceiter_android_rvh_replace_next_task_fair
+  __traceiter_android_rvh_schedule
+  __traceiter_android_rvh_select_task_rq_fair
+  __traceiter_android_rvh_setscheduler
+  __traceiter_android_rvh_setscheduler_prio
+  __traceiter_android_rvh_set_task_comm
+  __traceiter_android_rvh_tick_entry
+  __traceiter_android_rvh_uclamp_eff_get
+  __traceiter_android_vh_free_task
+  __tracepoint_android_rvh_check_preempt_wakeup_fair
+  __tracepoint_android_rvh_replace_next_task_fair
+  __tracepoint_android_rvh_schedule
+  __tracepoint_android_rvh_select_task_rq_fair
+  __tracepoint_android_rvh_setscheduler
+  __tracepoint_android_rvh_setscheduler_prio
+  __tracepoint_android_rvh_set_task_comm
+  __tracepoint_android_rvh_tick_entry
+  __tracepoint_android_rvh_uclamp_eff_get
+  __tracepoint_android_vh_free_task
+  tracepoint_probe_register
+  update_rq_clock
+  __xa_erase
+  __xa_insert
+
+# required by nvmem-rockchip-otp.ko
+  devm_hwspin_lock_request_specific
+  __hwspin_lock_timeout
+  __hwspin_unlock
+  of_hwspin_lock_get_id
+
+# required by optee.ko
+  __arm_smccc_hvc
+  bus_for_each_dev
+  devm_memremap
+  devm_memunmap
+  disable_percpu_irq
+  enable_percpu_irq
+  free_percpu_irq
+  irq_check_status_bit
+  mas_find
+  memremap
+  memunmap
+  pfn_is_map_memory
+  __request_percpu_irq
+  wait_for_completion_killable
+
+# required by pinctrl-rockchip.ko
+  devm_kasprintf_strarray
+  pinconf_generic_parse_dt_config
+  pinctrl_force_default
+  pinctrl_force_sleep
+  pin_get_name
+  radix_tree_lookup
+
+# required by pl330.ko
+  __amba_driver_register
+  amba_driver_unregister
+  dma_async_device_register
+  dma_async_device_unregister
+  dmaengine_unmap_put
+  dma_get_slave_channel
+  loops_per_jiffy
+  pm_runtime_irq_safe
+
+# required by pm-domains.ko
+  arm_smccc_1_1_get_conduit
+  devm_of_regulator_get
+  of_genpd_add_provider_onecell
+  panic
+  pm_genpd_add_subdomain
+  pm_genpd_init
+  pm_genpd_remove
+  pm_wq
+
+# required by pwm-regulator.ko
+  regulator_map_voltage_iterate
+
+# required by pwm-rockchip.ko
+  devm_rc_allocate_device
+  devm_rc_register_device
+  __ndelay
+
+# required by reboot-mode.ko
+  kfree_const
+  kstrdup_const
+  strreplace
+
+# required by regmap-i3c.ko
+  i3c_device_do_priv_xfers
+
+# required by rk805-pwrkey.ko
+  devm_request_any_context_irq
+
+# required by rk806-core.ko
+  devm_regmap_add_irq_chip
+
+# required by rk806-regulator.ko
+  linear_range_get_selector_high
+  rdev_get_dev
+
+# required by rk806-spi.ko
+  spi_write_then_read
+
+# required by rk808.ko
+  devm_register_reboot_notifier
+  register_syscore_ops
+  regmap_add_irq_chip
+  regmap_del_irq_chip
+  unregister_syscore_ops
+
+# required by rk_cma_heap.ko
+  dma_heap_put
+
+# required by rk_fiq_debugger.ko
+  console_lock
+  console_unlock
+  cpu_pm_register_notifier
+  of_irq_parse_one
+  oops_in_progress
+  platform_device_register
+
+# required by rk_system_heap.ko
+  contig_page_data
+  mod_node_page_state
+  __sg_page_iter_next
+  __sg_page_iter_start
+
+# required by rockchip-cpufreq.ko
+  cpufreq_unregister_notifier
+
+# required by rockchip-dfi.ko
+  bitmap_print_to_pagebuf
+  __cpuhp_state_add_instance
+  __cpuhp_state_remove_instance
+  perf_event_sysfs_show
+  perf_pmu_migrate_context
+  perf_pmu_register
+  perf_pmu_unregister
+
+# required by rockchip-dma.ko
+  dmaenginem_async_device_register
+  dma_get_any_slave_channel
+  dmam_pool_create
+  gen_pool_dma_zalloc
+  of_gen_pool_get
+  vchan_dma_desc_free_list
+  vchan_find_desc
+  vchan_init
+  vchan_tx_desc_free
+  vchan_tx_submit
+
+# required by rockchip_bus.ko
+  cpu_topology
+
+# required by rockchip_charger_manager.ko
+  gpiod_set_debounce
+  power_supply_put
+  power_supply_unreg_notifier
+
+# required by rockchip_debug.ko
+  irq_get_nr_irqs
+
+# required by rockchip_dmc.ko
+  cpufreq_cpu_put
+  cpufreq_quick_get
+  devfreq_event_disable_edev
+  devfreq_event_enable_edev
+  devfreq_event_get_edev_by_phandle
+  devfreq_event_get_edev_count
+  devfreq_event_get_event
+  devfreq_monitor_resume
+  devfreq_monitor_start
+  devfreq_monitor_stop
+  devfreq_monitor_suspend
+  devfreq_update_interval
+  devm_devfreq_register_opp_notifier
+  dev_pm_opp_add_dynamic
+  input_close_device
+  input_open_device
+  input_register_handle
+  input_register_handler
+  input_unregister_handle
+
+# required by rockchip_dmc_common.ko
+  down_write_trylock
+
+# required by rockchip_iommu.ko
+  dev_iommu_priv_set
+  devm_pm_domain_attach_list
+  devm_release_action
+  generic_single_device_group
+  iommu_alloc_pages_node_sz
+  iommu_device_register
+  iommu_device_sysfs_add
+  iommu_device_sysfs_remove
+  iommu_dma_get_resv_regions
+  iommu_free_pages
+  report_iommu_fault
+
+# required by rockchip_ipa.ko
+  of_get_compatible_child
+  thermal_zone_device_type
+
+# required by rockchip_opp_select.ko
+  dev_pm_opp_of_add_table
+  regulator_get_linear_step
+
+# required by rockchip_pm_config.ko
+  cpu_hotplug_disable
+  dev_pm_domain_attach_by_id
+  fwnode_gpiod_get_index
+  gpiod_put
+
+# required by rockchip_system_monitor.ko
+  add_cpu
+  bitmap_parselist
+  compat_only_sysfs_link_entry_to_kobj
+  dev_pm_qos_add_request
+  dev_pm_qos_remove_request
+  dev_pm_qos_update_request
+  remove_cpu
+
+# required by rockchip_thermal.ko
+  devm_clk_put
+  devm_thermal_of_zone_register
+  thermal_zone_device_disable
+  thermal_zone_device_enable
+  thermal_zone_device_priv
+  thermal_zone_device_update
+
+# required by rtc-rk808.ko
+  rtc_time64_to_tm
+  rtc_update_irq
+
+# required by scmi_transport_optee.ko
+  platform_device_add_data
+
+# required by sw_sync.ko
+  dma_fence_signal_locked
+
+# required by tee.ko
+  add_uevent_var
+  class_find_device
+  gen_pool_first_fit_align
+  gen_pool_virt_to_phys
+  in_egroup_p
+  iov_iter_extract_pages
+  iov_iter_kvec
+  iov_iter_npages
+  unpin_user_pages
+  uuid_null
+  __xa_cmpxchg
+  xa_store
+
+# required by test_power.ko
+  param_get_bool
+  param_set_bool
+  power_supply_get_property_direct
+  power_supply_register_extension
+  power_supply_unregister_extension
+
+# required by timer-rockchip.ko
+  clockevents_config_and_register
+
+# required by tps65132-regulator.ko
+  regulator_set_active_discharge_regmap
