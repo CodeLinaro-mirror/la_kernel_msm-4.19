@@ -365148,6 +365148,12 @@ function {
   parameter_id: 0x18ea6ae3
 }
 function {
+  id: 0x966023f5
+  return_type_id: 0x6720d32f
+  parameter_id: 0x21069feb
+  parameter_id: 0xe859c83a
+}
+function {
   id: 0x9666087d
   return_type_id: 0x6720d32f
   parameter_id: 0x2c8e1aaa
@@ -371565,6 +371571,13 @@ function {
   parameter_id: 0x3c63caea
 }
 function {
+  id: 0x9b15020e
+  return_type_id: 0x6720d32f
+  parameter_id: 0x188b9e81
+  parameter_id: 0x2f3288e0
+  parameter_id: 0x2f3288e0
+}
+function {
   id: 0x9b153afe
   return_type_id: 0x6720d32f
   parameter_id: 0x1aee9939
@@ -374361,6 +374374,12 @@ function {
   return_type_id: 0x6720d32f
   parameter_id: 0x1aeeade4
   parameter_id: 0x2df352f2
+}
+function {
+  id: 0x9b8cc3ad
+  return_type_id: 0x6720d32f
+  parameter_id: 0x18150d9f
+  parameter_id: 0x0258f96e
 }
 function {
   id: 0x9b8dca6a
@@ -413857,6 +413876,15 @@ elf_symbol {
   full_name: "available_idle_cpu"
 }
 elf_symbol {
+  id: 0x3eb51b20
+  name: "avenrun"
+  is_defined: true
+  symbol_type: OBJECT
+  crc: 0x7b117434
+  type_id: 0x1e18ac15
+  full_name: "avenrun"
+}
+elf_symbol {
   id: 0x22a2b90d
   name: "backing_file_open"
   is_defined: true
@@ -422080,6 +422108,15 @@ elf_symbol {
   crc: 0x192e97d3
   type_id: 0x84ba5d97
   full_name: "dev_vprintk_emit"
+}
+elf_symbol {
+  id: 0xb5b0b906
+  name: "dev_warn_probe"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x6673b9c0
+  type_id: 0x93f8ec59
+  full_name: "dev_warn_probe"
 }
 elf_symbol {
   id: 0x6fe2bbaf
@@ -438987,6 +439024,15 @@ elf_symbol {
   full_name: "iio_channel_get"
 }
 elf_symbol {
+  id: 0x0b446726
+  name: "iio_channel_get_all"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x04750a30
+  type_id: 0xa974af20
+  full_name: "iio_channel_get_all"
+}
+elf_symbol {
   id: 0x8aa99af0
   name: "iio_channel_release"
   is_defined: true
@@ -438994,6 +439040,15 @@ elf_symbol {
   crc: 0x77a76aa0
   type_id: 0x1ef16b9c
   full_name: "iio_channel_release"
+}
+elf_symbol {
+  id: 0x5ecdc560
+  name: "iio_channel_release_all"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x26558df0
+  type_id: 0x1ef16b9c
+  full_name: "iio_channel_release_all"
 }
 elf_symbol {
   id: 0x793a0b03
@@ -439273,6 +439328,33 @@ elf_symbol {
   crc: 0xc3b3586b
   type_id: 0xf886bca4
   full_name: "iio_trigger_using_own"
+}
+elf_symbol {
+  id: 0x1a135863
+  name: "iio_trigger_validate_own_device"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x566d55e0
+  type_id: 0x9ba6ac88
+  full_name: "iio_trigger_validate_own_device"
+}
+elf_symbol {
+  id: 0xdf3e8655
+  name: "iio_update_buffers"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x0f584408
+  type_id: 0x9b15020e
+  full_name: "iio_update_buffers"
+}
+elf_symbol {
+  id: 0x7bdc053e
+  name: "iio_validate_own_trigger"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xdd8832bf
+  type_id: 0x9bc64292
+  full_name: "iio_validate_own_trigger"
 }
 elf_symbol {
   id: 0x6f2f4bd1
@@ -456120,6 +456202,15 @@ elf_symbol {
   crc: 0x7851be11
   type_id: 0x9d80e32f
   full_name: "power_supply_is_system_supplied"
+}
+elf_symbol {
+  id: 0x778ba508
+  name: "power_supply_powers"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x4b024de7
+  type_id: 0x9b8cc3ad
+  full_name: "power_supply_powers"
 }
 elf_symbol {
   id: 0x26c5a1b9
@@ -474114,6 +474205,15 @@ elf_symbol {
   full_name: "usb_check_bulk_endpoints"
 }
 elf_symbol {
+  id: 0xcf4d7b06
+  name: "usb_check_int_endpoints"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xcd739115
+  type_id: 0xf38427c4
+  full_name: "usb_check_int_endpoints"
+}
+elf_symbol {
   id: 0x23a5ab99
   name: "usb_choose_configuration"
   is_defined: true
@@ -474996,6 +475096,15 @@ elf_symbol {
   full_name: "usb_interface_id"
 }
 elf_symbol {
+  id: 0x83676405
+  name: "usb_interrupt_msg"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x38a81c59
+  type_id: 0x9fce79d4
+  full_name: "usb_interrupt_msg"
+}
+elf_symbol {
   id: 0x89c78ea4
   name: "usb_kill_anchored_urbs"
   is_defined: true
@@ -475633,6 +475742,15 @@ elf_symbol {
   crc: 0xfddf9c74
   type_id: 0x9f5a91a4
   full_name: "usb_set_interface"
+}
+elf_symbol {
+  id: 0xd2697671
+  name: "usb_set_wireless_status"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x7e9f2694
+  type_id: 0x966023f5
+  full_name: "usb_set_wireless_status"
 }
 elf_symbol {
   id: 0x85997d50
@@ -483896,6 +484014,7 @@ interface {
   symbol_id: 0xe1180b7a
   symbol_id: 0xd772fde3
   symbol_id: 0x1abdc14f
+  symbol_id: 0x3eb51b20
   symbol_id: 0x22a2b90d
   symbol_id: 0x386b3c6e
   symbol_id: 0xb9c34cbd
@@ -484809,6 +484928,7 @@ interface {
   symbol_id: 0x1938c508
   symbol_id: 0x895ce6d0
   symbol_id: 0xfc7749bc
+  symbol_id: 0xb5b0b906
   symbol_id: 0x6fe2bbaf
   symbol_id: 0x55a1ee95
   symbol_id: 0x04c32c7c
@@ -486681,7 +486801,9 @@ interface {
   symbol_id: 0x76041d7e
   symbol_id: 0xd941beb8
   symbol_id: 0xe4653a75
+  symbol_id: 0x0b446726
   symbol_id: 0x8aa99af0
+  symbol_id: 0x5ecdc560
   symbol_id: 0x793a0b03
   symbol_id: 0x7ee06725
   symbol_id: 0xea065265
@@ -486713,6 +486835,9 @@ interface {
   symbol_id: 0x08fd4b84
   symbol_id: 0xc6d8f246
   symbol_id: 0xfb09b362
+  symbol_id: 0x1a135863
+  symbol_id: 0xdf3e8655
+  symbol_id: 0x7bdc053e
   symbol_id: 0x6f2f4bd1
   symbol_id: 0x0583cb0a
   symbol_id: 0xf87ecda4
@@ -488582,6 +488707,7 @@ interface {
   symbol_id: 0x86804f09
   symbol_id: 0xf20efe74
   symbol_id: 0xd28bb85a
+  symbol_id: 0x778ba508
   symbol_id: 0x26c5a1b9
   symbol_id: 0xb0eab20a
   symbol_id: 0x8229d43c
@@ -490580,6 +490706,7 @@ interface {
   symbol_id: 0x3d66dcb8
   symbol_id: 0x1f68a496
   symbol_id: 0x12289dad
+  symbol_id: 0xcf4d7b06
   symbol_id: 0x23a5ab99
   symbol_id: 0x2a589f64
   symbol_id: 0x7da41bc7
@@ -490678,6 +490805,7 @@ interface {
   symbol_id: 0x5df193f7
   symbol_id: 0x9b635032
   symbol_id: 0x4048e514
+  symbol_id: 0x83676405
   symbol_id: 0x89c78ea4
   symbol_id: 0x37cf2035
   symbol_id: 0x5754262e
@@ -490749,6 +490877,7 @@ interface {
   symbol_id: 0xedbb00b2
   symbol_id: 0x34af8a35
   symbol_id: 0x3cc50b4b
+  symbol_id: 0xd2697671
   symbol_id: 0x85997d50
   symbol_id: 0x6d33fccc
   symbol_id: 0x00e4f4d5

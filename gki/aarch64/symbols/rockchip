@@ -1557,6 +1557,11 @@
 # required by act8865-regulator.ko
   regulator_set_pull_down_regmap
 
+# required by adc-keys.ko
+  iio_get_channel_type
+  input_set_poll_interval
+  input_setup_polling
+
 # required by ahci.ko
   pcim_iomap
   pcim_pin_device
@@ -1641,6 +1646,12 @@
   verify_pkcs7_signature
   wireless_nlevent_flush
 
+# required by chipone-ts.ko
+  gpio_request_one
+  kstrtou16
+  __seq_puts
+  vprintk
+
 # required by clk-link.ko
   pm_clk_add
 
@@ -1687,6 +1698,9 @@
   of_clk_hw_onecell_get
   scmi_driver_register
   scmi_driver_unregister
+
+# required by cm3218.ko
+  i2c_smbus_write_word_data
 
 # required by cpufreq-dt.ko
   cpufreq_boost_set_sw
@@ -1902,12 +1916,99 @@
   of_cpu_node_to_id
   of_pinctrl_get
 
+# required by hid-alps.ko
+  input_alloc_absinfo
+
+# required by hid-holtek-kbd.ko
+  usb_ifnum_to_if
+
+# required by hid-lenovo.ko
+  led_classdev_register_ext
+  led_classdev_unregister
+
+# required by hid-steelseries.ko
+  power_supply_powers
+  usb_set_wireless_status
+
+# required by hid-thrustmaster.ko
+  usb_check_int_endpoints
+  usb_interrupt_msg
+  usb_kill_urb
+
+# required by himax_mmi.ko
+  gpio_request
+  strnstr
+  sysfs_create_bin_file
+  sysfs_remove_bin_file
+
+# required by hynitron_touch.ko
+  regulator_count_voltages
+
+# required by i2c-algo-bit.ko
+  yield
+
+# required by i2c-dev.ko
+  bus_register_notifier
+  bus_unregister_notifier
+  device_for_each_child
+  i2c_for_each_dev
+  i2c_verify_client
+
+# required by i2c-hid.ko
+  drm_is_panel_follower
+  drm_panel_add_follower
+  drm_panel_remove_follower
+  hid_add_device
+  hid_allocate_device
+  hid_destroy_device
+  hid_driver_reset_resume
+  hid_driver_suspend
+  hid_parse_report
+  hid_safe_input_report
+
+# required by i2c-mux.ko
+  __i2c_transfer
+  rt_mutex_lock
+  rt_mutex_trylock
+  rt_mutex_unlock
+
+# required by i2c-rk3x.ko
+  i2c_parse_fw_timings
+  i2c_put_dma_safe_msg_buf
+  unregister_restart_handler
+
+# required by industrialio-buffer-cb.ko
+  iio_channel_get_all
+  iio_channel_release_all
+  iio_update_buffers
+
+# required by industrialio-triggered-buffer.ko
+  iio_alloc_pollfunc
+  iio_dealloc_pollfunc
+
 # required by io-domain.ko
   _dev_crit
 
 # required by kalmia.ko
   usb_bulk_msg
   usb_check_bulk_endpoints
+
+# required by kfifo_buf.ko
+  __kfifo_from_user
+  __kfifo_to_user
+
+# required by leds-gpio.ko
+  devm_pinctrl_put
+  gpiod_toggle_active_low
+  led_init_default_state_get
+
+# required by leds-rgb13h.ko
+  led_classdev_flash_register_ext
+  led_classdev_flash_unregister
+
+# required by ledtrig-heartbeat.ko
+  avenrun
+  timer_shutdown_sync
 
 # required by libahci.ko
   __printk_ratelimit
@@ -2286,6 +2387,9 @@
   mmput
   mtree_load
 
+# required by rk628_misc.ko
+  platform_device_del
+
 # required by rk805-pwrkey.ko
   devm_request_any_context_irq
 
@@ -2316,6 +2420,9 @@
   of_irq_parse_one
   oops_in_progress
   platform_device_register
+
+# required by rk_headset_irq_hook_adc.ko
+  iio_read_channel_raw
 
 # required by rk_ircut.ko
   drain_workqueue
@@ -2428,6 +2535,9 @@
 
 # required by rockchip_dmc_common.ko
   down_write_trylock
+
+# required by rockchip_headset_core.ko
+  iio_channel_get
 
 # required by rockchip_iommu.ko
   dev_iommu_priv_set
@@ -2825,6 +2935,39 @@
   snd_soc_of_parse_aux_devs
   snd_soc_of_parse_node_prefix
 
+# required by spi-bitbang.ko
+  spi_finalize_current_transfer
+
+# required by spi-gpio.ko
+  __devm_spi_alloc_controller
+
+# required by spi-rockchip-slave.ko
+  spi_finalize_current_message
+
+# required by spi-rockchip.ko
+  dev_warn_probe
+
+# required by spidev.ko
+  spi_target_abort
+  stream_open
+
+# required by st_lsm6dsx.ko
+  __iio_device_claim_direct
+  __iio_device_release_direct
+  iio_push_event
+  iio_read_mount_matrix
+  iio_show_mount_matrix
+
+# required by st_lsm6dsx_i3c.ko
+  i3c_device_match_id
+  i3cdev_to_dev
+  i3c_driver_register_with_owner
+  i3c_driver_unregister
+
+# required by st_lsm6dsx_spi.ko
+  __devm_regmap_init_spi
+  spi_get_device_id
+
 # required by stmmac-platform.ko
   device_get_phy_mode
   of_alias_get_highest_id
@@ -3144,3 +3287,12 @@
   vb2_destroy_framevec
   vm_map_ram
   vm_unmap_ram
+
+# required by vl6180.ko
+  __devm_iio_trigger_alloc
+  devm_iio_trigger_register
+  iio_buffer_enabled
+  iio_read_const_attr
+  iio_trigger_poll_nested
+  iio_trigger_validate_own_device
+  iio_validate_own_trigger
