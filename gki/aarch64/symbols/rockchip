@@ -1557,6 +1557,14 @@
 # required by act8865-regulator.ko
   regulator_set_pull_down_regmap
 
+# required by ahci.ko
+  pcim_iomap
+  pcim_pin_device
+  pcim_request_all_regions
+  pm_suspend_default_s2idle
+  sysfs_add_file_to_group
+  sysfs_remove_file_from_group
+
 # required by bq25890_charger.ko
   devm_regmap_field_bulk_alloc
   power_supply_get_property_from_supplier
@@ -1637,6 +1645,31 @@
   gov_update_cpu_data
   sampling_rate_store
 
+# required by cqhci.ko
+  devm_blk_crypto_profile_init
+  mmc_cqe_request_done
+  mmc_hw_reset
+
+# required by dw_mmc-rockchip.ko
+  clk_get_phase
+
+# required by dw_mmc.ko
+  debugfs_create_u32
+  debugfs_create_x64
+  devm_mmc_alloc_host
+  mmc_add_host
+  mmc_detect_change
+  mmc_gpio_get_cd
+  mmc_gpio_get_ro
+  mmc_host_can_gpio_cd
+  mmc_regulator_get_supply
+  mmc_regulator_set_ocr
+  mmc_regulator_set_vqmmc
+  mmc_remove_host
+  mmc_request_done
+  sdio_signal_irq
+  system_bh_wq
+
 # required by dw_wdt.ko
   watchdog_init_timeout
   watchdog_register_device
@@ -1680,6 +1713,59 @@
 
 # required by io-domain.ko
   _dev_crit
+
+# required by libahci.ko
+  __printk_ratelimit
+
+# required by libahci_platform.ko
+  of_platform_device_create
+  reset_control_rearm
+
+# required by libata.ko
+  async_schedule_node
+  async_synchronize_cookie
+  attribute_container_register
+  attribute_container_unregister
+  autoremove_wake_function
+  blk_abort_request
+  cancel_work
+  device_link_remove
+  glob_match
+  pci_bus_type
+  prepare_to_wait
+  __scsi_add_device
+  scsi_add_host_with_dma
+  scsi_build_sense
+  scsi_build_sense_buffer
+  scsi_change_queue_depth
+  scsi_check_sense
+  scsi_device_set_state
+  scsi_done
+  scsi_eh_finish_cmd
+  scsi_eh_flush_done_q
+  scsi_execute_cmd
+  __scsi_format_command
+  scsi_host_alloc
+  scsi_host_put
+  scsi_remove_device
+  scsi_remove_host
+  scsi_rescan_device
+  scsi_resume_device
+  scsi_schedule_eh
+  scsi_sense_desc_find
+  scsi_set_sense_field_pointer
+  scsi_set_sense_information
+  sdev_evt_send_simple
+  system_entering_hibernation
+  trace_seq_printf
+  trace_seq_putc
+  transport_add_device
+  transport_class_register
+  transport_class_unregister
+  transport_configure_device
+  transport_destroy_device
+  transport_remove_device
+  transport_setup_device
 
 # required by magicsched.ko
   android_rvh_probe_register
@@ -1784,6 +1870,13 @@
   devm_rc_allocate_device
   devm_rc_register_device
   __ndelay
+
+# required by pwrseq_simple.ko
+  bitmap_alloc
+  devm_gpiod_get_array
+  gpiod_set_array_value_cansleep
+  mmc_pwrseq_register
+  mmc_pwrseq_unregister
 
 # required by reboot-mode.ko
   kfree_const
@@ -1940,6 +2033,48 @@
 # required by scmi_transport_optee.ko
   platform_device_add_data
 
+# required by sdhci-of-arasan.ko
+  sdhci_add_host
+  sdhci_pltfm_remove
+  sdhci_set_power_and_bus_voltage
+  sdhci_set_uhs_signaling
+
+# required by sdhci-of-dwcmshc.ko
+  dma_get_required_mask
+  sdhci_adma_write_desc
+  sdhci_enable_v4_mode
+  sdhci_end_tuning
+  __sdhci_execute_tuning
+  sdhci_remove_host
+  sdhci_request
+  sdhci_reset_tuning
+  sdhci_start_tuning
+
+# required by sg.ko
+  blk_execute_rq_nowait
+  blk_get_queue
+  blk_mq_free_request
+  blk_put_queue
+  blk_rq_map_user_io
+  blk_rq_unmap_user
+  cdev_alloc
+  class_interface_unregister
+  fasync_helper
+  get_sg_io_hdr
+  kill_fasync
+  put_sg_io_hdr
+  _raw_write_lock_irq
+  _raw_write_unlock_irq
+  scsi_alloc_request
+  scsi_block_when_processing_errors
+  scsi_cmd_allowed
+  scsi_ioctl
+  scsi_ioctl_block_when_processing_errors
+  scsi_normalize_sense
+  __scsi_print_sense
+  scsi_register_interface
+  sdev_prefix_printk
+
 # required by sw_sync.ko
   dma_fence_signal_locked
 
@@ -1969,3 +2104,17 @@
 
 # required by tps65132-regulator.ko
   regulator_set_active_discharge_regmap
+
+# required by ufs-rockchip.ko
+  devm_clk_bulk_get_all_enabled
+  ufshcd_dme_enable
+  ufshcd_dme_reset
+  ufshcd_dme_set_attr
+  ufshcd_pltfrm_init
+  ufshcd_pltfrm_remove
+  ufshcd_resume_complete
+  ufshcd_runtime_resume
+  ufshcd_runtime_suspend
+  ufshcd_suspend_prepare
+  ufshcd_system_resume
+  ufshcd_system_suspend
