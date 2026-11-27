@@ -1577,6 +1577,67 @@
   usb_poison_urb
   usb_unpoison_urb
 
+# required by cdc_mbim.ko
+  cdc_ncm_bind_common
+  cdc_ncm_change_mtu
+  cdc_ncm_fill_tx_frame
+  cdc_ncm_rx_verify_ndp16
+  cdc_ncm_rx_verify_nth16
+  cdc_ncm_select_altsetting
+  cdc_ncm_unbind
+  in6_dev_finish_destroy
+  __ipv6_addr_type
+  ipv6_stub
+  usb_match_id
+  __vlan_find_dev_deep_rcu
+
+# required by cfg80211.ko
+  bpf_trace_run11
+  bpf_trace_run8
+  dev_change_net_namespace
+  __dev_get_by_index
+  dev_get_by_index
+  device_rename
+  faux_device_create
+  faux_device_destroy
+  genlmsg_multicast_allns
+  genlmsg_put
+  genl_register_family
+  genl_unregister_family
+  get_net_ns_by_fd
+  get_net_ns_by_pid
+  inet_csk_get_port
+  init_uts_ns
+  key_put
+  keyring_alloc
+  kobject_uevent_env
+  ktime_get_coarse_with_offset
+  memcmp
+  netlink_broadcast_filtered
+  netlink_register_notifier
+  netlink_unicast
+  netlink_unregister_notifier
+  net_ns_type_operations
+  nla_find
+  nla_memcpy
+  __nla_parse
+  nla_put
+  nla_put_64bit
+  nla_reserve
+  __nla_validate
+  __put_net
+  register_netdevice
+  register_pernet_device
+  request_firmware_nowait
+  rfkill_blocked
+  rfkill_resume_polling
+  __sock_create
+  sock_release
+  unregister_netdevice_queue
+  unregister_pernet_device
+  verify_pkcs7_signature
+  wireless_nlevent_flush
+
 # required by clk-link.ko
   pm_clk_add
 
@@ -1658,6 +1719,9 @@
   mmc_cqe_request_done
   mmc_hw_reset
 
+# required by dm9601.ko
+  mii_link_ok
+
 # required by dw_mmc-rockchip.ko
   clk_get_phase
 
@@ -1707,6 +1771,13 @@
   usb_speed_string
   usb_wakeup_enabled_descendants
 
+# required by dwmac-rockchip.ko
+  csum_tcpudp_nofold
+  reset_control_put
+
+# required by dwmac-sun55i.ko
+  devm_regulator_get_enable_optional
+
 # required by fan53555.ko
   i2c_get_match_data
 
@@ -1749,6 +1820,10 @@
 
 # required by io-domain.ko
   _dev_crit
+
+# required by kalmia.ko
+  usb_bulk_msg
+  usb_check_bulk_endpoints
 
 # required by libahci.ko
   __printk_ratelimit
@@ -1803,6 +1878,53 @@
   transport_remove_device
   transport_setup_device
 
+# required by mac80211.ko
+  alloc_netdev_mqs
+  __bitmap_subset
+  crc32_be
+  dev_alloc_name
+  __dev_queue_xmit
+  drop_reasons_register_subsys
+  drop_reasons_unregister_subsys
+  ether_setup
+  get_random_u16
+  __hw_addr_init
+  __hw_addr_sync
+  __hw_addr_unsync
+  kernel_param_lock
+  kernel_param_unlock
+  kfree_skb_list_reason
+  ktime_get_seconds
+  kunit_hooks
+  kunit_running
+  netdev_set_default_ethtool_ops
+  netif_receive_skb
+  netif_receive_skb_list
+  ___pskb_trim
+  rcu_barrier
+  register_inet6addr_notifier
+  register_inetaddr_notifier
+  rhashtable_free_and_destroy
+  rhashtable_insert_slow
+  rhltable_init_noprof
+  __rht_bucket_nested
+  rht_bucket_nested
+  rht_bucket_nested_insert
+  round_jiffies
+  round_jiffies_up
+  skb_clone_sk
+  skb_complete_wifi_ack
+  skb_copy
+  skb_csum_hwoffload_help
+  skb_dequeue
+  skb_ensure_writable
+  __skb_get_hash_net
+  __skb_gso_segment
+  skb_queue_head
+  skb_queue_purge_reason
+  unregister_inet6addr_notifier
+  unregister_inetaddr_notifier
+
 # required by magicsched.ko
   android_rvh_probe_register
   available_idle_cpu
@@ -1848,6 +1970,9 @@
   update_rq_clock
   __xa_erase
   __xa_insert
+
+# required by mdio-mux.ko
+  of_mdio_find_bus
 
 # required by nvmem-rockchip-otp.ko
   devm_hwspin_lock_request_specific
@@ -1916,6 +2041,23 @@
   pci_remove_root_bus
   pci_stop_root_bus
 
+# required by pcs_xpcs.ko
+  clk_bulk_get_optional
+  devm_mdiobus_alloc_size
+  __devm_mdiobus_register
+  fwnode_mdio_find_device
+  mdiobus_c45_modify
+  mdiobus_c45_modify_changed
+  mdiobus_c45_read
+  mdiobus_c45_write
+  mdio_device_create
+  mdio_device_free
+  mdio_device_register
+  phylink_mii_c22_pcs_decode_state
+  phylink_mii_c22_pcs_encode_advertisement
+  phylink_mii_c45_pcs_get_state
+  phylink_resolve_c73
+
 # required by phy-rockchip-inno-usb3.ko
   usb_add_phy
 
@@ -1962,6 +2104,59 @@
   mmc_pwrseq_register
   mmc_pwrseq_unregister
 
+# required by r8168.ko
+  alloc_etherdev_mqs
+  csum_ipv6_magic
+  ethtool_convert_legacy_u32_to_link_mode
+  ethtool_convert_link_mode_to_legacy_u32
+  linkwatch_fire_event
+  netif_set_tso_max_segs
+  netif_set_tso_max_size
+  pci_clear_master
+  pci_clear_mwi
+  pci_enable_msi
+  pci_enable_msix_range
+  pci_enable_wake
+  pci_get_slot
+  pci_prepare_to_sleep
+  pci_set_mwi
+  pci_wake_from_d3
+  proc_get_parent_data
+  proc_mkdir_data
+  __skb_pad
+  softnet_data
+
+# required by realtek.ko
+  genphy_c45_an_config_aneg
+  genphy_c45_aneg_done
+  genphy_c45_check_and_restart_aneg
+  genphy_c45_pma_read_abilities
+  genphy_c45_pma_resume
+  genphy_c45_pma_setup_forced
+  genphy_c45_pma_suspend
+  genphy_c45_read_status
+  genphy_handle_interrupt_no_ack
+  genphy_read_abilities
+  genphy_read_mmd_unsupported
+  genphy_update_link
+  genphy_write_mmd_unsupported
+  __mdiobus_c45_read
+  __mdiobus_c45_write
+  __mdiobus_read
+  __mdiobus_write
+  phy_basic_t1_features
+  __phy_modify
+  phy_modify_changed
+  phy_modify_mmd
+  phy_modify_mmd_changed
+  phy_modify_paged
+  phy_modify_paged_changed
+  phy_read_paged
+  phy_restore_page
+  phy_save_page
+  phy_select_page
+  phy_write_paged
+
 # required by reboot-mode.ko
   kfree_const
   kstrdup_const
@@ -1969,6 +2164,12 @@
 
 # required by regmap-i3c.ko
   i3c_device_do_priv_xfers
+
+# required by rfkill-rk.ko
+  rfkill_init_sw_state
+  rfkill_set_sw_state
+  simple_write_to_buffer
+  strcpy
 
 # required by rk805-pwrkey.ko
   devm_request_any_context_irq
@@ -2030,6 +2231,9 @@
   vchan_init
   vchan_tx_desc_free
   vchan_tx_submit
+
+# required by rockchip-fephy.ko
+  phy_basic_features
 
 # required by rockchip_bus.ko
   cpu_topology
@@ -2158,6 +2362,151 @@
   __scsi_print_sense
   scsi_register_interface
   sdev_prefix_printk
+
+# required by smsc.ko
+  devm_clk_get_optional_enabled_with_rate
+  ethtool_puts
+
+# required by smsc95xx.ko
+  __irq_domain_alloc_fwnode
+  irq_domain_free_fwnode
+  irq_domain_simple_ops
+  __mdiobus_register
+  net_selftest
+  net_selftest_get_count
+  net_selftest_get_strings
+  phy_connect_direct
+  phy_disconnect
+  phy_ethtool_get_link_ksettings
+  phy_ethtool_nway_reset
+  phy_ethtool_set_link_ksettings
+  phy_find_first
+  phy_get_pause
+  phy_init_hw
+  phy_mii_ioctl
+  phy_print_status
+  phy_set_asym_pause
+  phy_start
+  phy_stop
+  phy_support_asym_pause
+  usb_autopm_get_interface_no_resume
+
+# required by stmmac-platform.ko
+  device_get_phy_mode
+  of_alias_get_highest_id
+  of_get_mac_address
+  of_phy_is_fixed_link
+
+# required by stmmac.ko
+  bpf_dispatcher_xdp_func
+  bpf_master_redirect_enabled_key
+  bpf_prog_put
+  bpf_stats_enabled_key
+  bpf_warn_invalid_xdp_action
+  devm_alloc_etherdev_mqs
+  __devm_alloc_percpu
+  dev_open
+  eth_header_parse_protocol
+  ethtool_mmsv_event_handle
+  ethtool_mmsv_get_mm
+  ethtool_mmsv_init
+  ethtool_mmsv_link_state_handle
+  ethtool_mmsv_set_mm
+  ethtool_mmsv_stop
+  flow_block_cb_setup_simple
+  flow_rule_match_basic
+  flow_rule_match_ipv4_addrs
+  flow_rule_match_ports
+  flow_rule_match_vlan
+  fwnode_find_reference
+  fwnode_get_named_child_node
+  fwnode_get_phy_node
+  get_device_system_crosststamp
+  hrtimer_try_to_cancel
+  mdiobus_get_phy
+  napi_alloc_skb
+  napi_build_skb
+  napi_complete_done
+  napi_disable
+  napi_enable
+  __napi_schedule
+  napi_schedule_prep
+  netdev_pick_tx
+  netdev_reset_tc
+  netdev_rss_key_fill
+  netdev_set_num_tc
+  netdev_set_tc_queue
+  netif_napi_add_weight_locked
+  __netif_napi_del_locked
+  __num_online_cpus
+  page_pool_alloc_pages
+  page_pool_create
+  page_pool_destroy
+  page_pool_put_unrefed_netmem
+  phylink_connect_phy
+  phylink_create
+  phylink_destroy
+  phylink_disconnect_phy
+  phylink_ethtool_get_eee
+  phylink_ethtool_get_pauseparam
+  phylink_ethtool_get_wol
+  phylink_ethtool_ksettings_get
+  phylink_ethtool_ksettings_set
+  phylink_ethtool_nway_reset
+  phylink_ethtool_set_eee
+  phylink_ethtool_set_pauseparam
+  phylink_ethtool_set_wol
+  phylink_expects_phy
+  phylink_fwnode_phy_connect
+  phylink_get_eee_err
+  phylink_limit_mac_speed
+  phylink_mii_ioctl
+  phylink_pcs_pre_init
+  phylink_prepare_resume
+  phylink_resume
+  phylink_rx_clk_stop_block
+  phylink_rx_clk_stop_unblock
+  phylink_speed_down
+  phylink_speed_up
+  phylink_start
+  phylink_stop
+  phylink_suspend
+  ptp_clock_event
+  ptp_clock_index
+  ptp_clock_register
+  ptp_clock_unregister
+  timespec64_add_safe
+  __traceiter_xdp_exception
+  __tracepoint_xdp_exception
+  xdp_convert_zc_to_xdp_frame
+  xdp_do_flush
+  xdp_do_redirect
+  xdp_features_clear_redirect_target
+  xdp_features_set_redirect_target
+  xdp_master_redirect
+  xdp_return_frame
+  xdp_return_frame_rx_napi
+  xdp_rxq_info_is_reg
+  __xdp_rxq_info_reg
+  xdp_rxq_info_reg_mem_model
+  xdp_rxq_info_unreg
+  xdp_rxq_info_unreg_mem_model
+  xdp_warn
+  xp_alloc
+  xp_dma_map
+  xp_dma_unmap
+  xp_free
+  xp_raw_get_data
+  xp_raw_get_dma
+  xp_set_rxq_info
+  xsk_clear_rx_need_wakeup
+  xsk_get_pool_from_qid
+  xsk_set_rx_need_wakeup
+  xsk_set_tx_need_wakeup
+  xsk_tx_completed
+  xsk_tx_peek_desc
+  xsk_tx_release
+  xsk_uses_need_wakeup
 
 # required by sw_sync.ko
   dma_fence_signal_locked
