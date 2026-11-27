@@ -348319,6 +348319,11 @@ function {
   parameter_id: 0x3e10b518
 }
 function {
+  id: 0x2aa171b7
+  return_type_id: 0x40e51470
+  parameter_id: 0x2197d55b
+}
+function {
   id: 0x2aed06ac
   return_type_id: 0x48b5725f
   parameter_id: 0xea63239e
@@ -350401,6 +350406,13 @@ function {
   parameter_id: 0x347303b4
 }
 function {
+  id: 0x48e7c6d2
+  return_type_id: 0xc9082b19
+  parameter_id: 0x347303b4
+  parameter_id: 0x00c72527
+  parameter_id: 0x00c72527
+}
+function {
   id: 0x48f8ec98
   return_type_id: 0x04ca9246
   parameter_id: 0x0258f96e
@@ -350553,6 +350565,12 @@ function {
   id: 0x4d0cf62c
   return_type_id: 0x18e64f74
   parameter_id: 0x3668642a
+}
+function {
+  id: 0x4d306964
+  return_type_id: 0x21069feb
+  parameter_id: 0x3c9a9fb2
+  parameter_id: 0x6720d32f
 }
 function {
   id: 0x4d744842
@@ -358290,6 +358308,12 @@ function {
   parameter_id: 0x33756485
   parameter_id: 0x3e10b518
   parameter_id: 0x6720d32f
+}
+function {
+  id: 0x91bcff36
+  return_type_id: 0x6720d32f
+  parameter_id: 0x32a623d7
+  parameter_id: 0x25653b02
 }
 function {
   id: 0x91bdfab7
@@ -381794,6 +381818,12 @@ function {
   parameter_id: 0x0aa1f0ee
 }
 function {
+  id: 0x9e7bd8f3
+  return_type_id: 0x6720d32f
+  parameter_id: 0x05c2a3ca
+  parameter_id: 0xa2e4cbbb
+}
+function {
   id: 0x9e7f936c
   return_type_id: 0x6720d32f
   parameter_id: 0x0c485c36
@@ -386683,6 +386713,11 @@ function {
   parameter_id: 0x9565759f
   parameter_id: 0x3e10b518
   parameter_id: 0x6720d32f
+}
+function {
+  id: 0xcd844708
+  return_type_id: 0x4585663f
+  parameter_id: 0x0d7ce7cc
 }
 function {
   id: 0xcd8cb8f5
@@ -430430,6 +430465,15 @@ elf_symbol {
   full_name: "dw_pcie_write_dbi"
 }
 elf_symbol {
+  id: 0xda24f3dd
+  name: "dw_pcie_write_dbi2"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xea5bd3b4
+  type_id: 0x1ccc8f30
+  full_name: "dw_pcie_write_dbi2"
+}
+elf_symbol {
   id: 0x63e89795
   name: "edac_device_add_device"
   is_defined: true
@@ -434425,6 +434469,15 @@ elf_symbol {
   full_name: "getboottime64"
 }
 elf_symbol {
+  id: 0x95093427
+  name: "gether_attach_gadget"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xf0d2ad8c
+  type_id: 0x91bcff36
+  full_name: "gether_attach_gadget"
+}
+elf_symbol {
   id: 0xa7339c42
   name: "gether_cleanup"
   is_defined: true
@@ -434441,6 +434494,15 @@ elf_symbol {
   crc: 0x7c453475
   type_id: 0xf2708109
   full_name: "gether_connect"
+}
+elf_symbol {
+  id: 0x06e0564d
+  name: "gether_detach_gadget"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xc2fb1390
+  type_id: 0x1c31d966
+  full_name: "gether_detach_gadget"
 }
 elf_symbol {
   id: 0x46e18dbd
@@ -449670,6 +449732,15 @@ elf_symbol {
   crc: 0xccbc36bc
   type_id: 0x909c23c2
   full_name: "of_pci_get_max_link_speed"
+}
+elf_symbol {
+  id: 0xd7a6c809
+  name: "of_pci_get_slot_power_limit"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x0fcd6e5f
+  type_id: 0x48e7c6d2
+  full_name: "of_pci_get_slot_power_limit"
 }
 elf_symbol {
   id: 0x2d5d9d4f
@@ -468493,6 +468564,15 @@ elf_symbol {
   full_name: "tcpci_get_tcpm_port"
 }
 elf_symbol {
+  id: 0x85459353
+  name: "tcpci_irq"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xa8bcced0
+  type_id: 0x2aa171b7
+  full_name: "tcpci_irq"
+}
+elf_symbol {
   id: 0x1ecfd7d9
   name: "tcpci_register_port"
   is_defined: true
@@ -472620,6 +472700,15 @@ elf_symbol {
   full_name: "usb_add_hcd"
 }
 elf_symbol {
+  id: 0xea314c1f
+  name: "usb_add_phy"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xa13b067b
+  type_id: 0x9e7bd8f3
+  full_name: "usb_add_phy"
+}
+elf_symbol {
   id: 0xdc59a2d7
   name: "usb_add_phy_dev"
   is_defined: true
@@ -473149,6 +473238,15 @@ elf_symbol {
   crc: 0x1c47e252
   type_id: 0x9dcedb70
   full_name: "usb_find_common_endpoints"
+}
+elf_symbol {
+  id: 0x899ff164
+  name: "usb_find_interface"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x1fdd8175
+  type_id: 0x4d306964
+  full_name: "usb_find_interface"
 }
 elf_symbol {
   id: 0x4ec99a42
@@ -473781,6 +473879,15 @@ elf_symbol {
   full_name: "usb_pipe_type_check"
 }
 elf_symbol {
+  id: 0xbf06fcb7
+  name: "usb_poison_anchored_urbs"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0xe9b5f933
+  type_id: 0x1d8d80fc
+  full_name: "usb_poison_anchored_urbs"
+}
+elf_symbol {
   id: 0xcaff4b1e
   name: "usb_poison_urb"
   is_defined: true
@@ -474382,6 +474489,15 @@ elf_symbol {
   crc: 0x8c705ff7
   type_id: 0x1675f88f
   full_name: "usb_unregister_notify"
+}
+elf_symbol {
+  id: 0x9ea1c58f
+  name: "usb_wakeup_enabled_descendants"
+  is_defined: true
+  symbol_type: FUNCTION
+  crc: 0x84ae0448
+  type_id: 0xcd844708
+  full_name: "usb_wakeup_enabled_descendants"
 }
 elf_symbol {
   id: 0x140d9164
@@ -484469,6 +484585,7 @@ interface {
   symbol_id: 0x16b47c46
   symbol_id: 0xf52b6f8a
   symbol_id: 0x2475753e
+  symbol_id: 0xda24f3dd
   symbol_id: 0x63e89795
   symbol_id: 0xce8db673
   symbol_id: 0x9a7525de
@@ -484911,8 +485028,10 @@ interface {
   symbol_id: 0x4ba4e06f
   symbol_id: 0x828a6c7c
   symbol_id: 0xa8319a8c
+  symbol_id: 0x95093427
   symbol_id: 0xa7339c42
   symbol_id: 0x23fbc3f8
+  symbol_id: 0x06e0564d
   symbol_id: 0x46e18dbd
   symbol_id: 0xf5970852
   symbol_id: 0x0a3cdb4a
@@ -486602,6 +486721,7 @@ interface {
   symbol_id: 0x01465bb9
   symbol_id: 0x24945e17
   symbol_id: 0x7e41af4d
+  symbol_id: 0xd7a6c809
   symbol_id: 0x2d5d9d4f
   symbol_id: 0x99aacdb6
   symbol_id: 0xf330039e
@@ -488692,6 +488812,7 @@ interface {
   symbol_id: 0xef808179
   symbol_id: 0xd6ec2702
   symbol_id: 0x857e5dc9
+  symbol_id: 0x85459353
   symbol_id: 0x1ecfd7d9
   symbol_id: 0x80ba938c
   symbol_id: 0x76f0e146
@@ -489150,6 +489271,7 @@ interface {
   symbol_id: 0x8f72141f
   symbol_id: 0x8dc26f05
   symbol_id: 0xcb2698e3
+  symbol_id: 0xea314c1f
   symbol_id: 0xdc59a2d7
   symbol_id: 0xc8d57f30
   symbol_id: 0xa1439ad9
@@ -489209,6 +489331,7 @@ interface {
   symbol_id: 0x792a6c04
   symbol_id: 0xdc1a1266
   symbol_id: 0x4a8ce807
+  symbol_id: 0x899ff164
   symbol_id: 0x4ec99a42
   symbol_id: 0xf83f300d
   symbol_id: 0x57c3f1e7
@@ -489279,6 +489402,7 @@ interface {
   symbol_id: 0xf55bd7e0
   symbol_id: 0xf3c1fd90
   symbol_id: 0xf92fdbc3
+  symbol_id: 0xbf06fcb7
   symbol_id: 0xcaff4b1e
   symbol_id: 0x7d3b92eb
   symbol_id: 0x4caecc79
@@ -489346,6 +489470,7 @@ interface {
   symbol_id: 0x0741c87d
   symbol_id: 0x3bf4fac5
   symbol_id: 0xcac8f190
+  symbol_id: 0x9ea1c58f
   symbol_id: 0x140d9164
   symbol_id: 0xbbf007f4
   symbol_id: 0xd28057f3

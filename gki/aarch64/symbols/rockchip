@@ -1565,9 +1565,17 @@
   sysfs_add_file_to_group
   sysfs_remove_file_from_group
 
+# required by aspm_ext.ko
+  pci_find_ext_capability
+
 # required by bq25890_charger.ko
   devm_regmap_field_bulk_alloc
   power_supply_get_property_from_supplier
+
+# required by cdc-wdm.ko
+  cdc_parse_cdc_header
+  usb_poison_urb
+  usb_unpoison_urb
 
 # required by clk-link.ko
   pm_clk_add
@@ -1676,6 +1684,29 @@
   watchdog_set_restart_priority
   watchdog_unregister_device
 
+# required by dwc2.ko
+  __bitmap_clear
+  bitmap_find_next_zero_area_off
+  of_usb_update_otg_caps
+  pci_match_id
+  phy_reset
+  usb_add_gadget_udc
+  usb_del_gadget_udc
+  usb_ep_set_maxpacket_limit
+  usb_gadget_giveback_request
+  usb_gadget_map_request
+  usb_gadget_set_state
+  usb_gadget_unmap_request
+  usb_get_dr_mode
+  usb_get_role_switch_default_mode
+  usb_hcd_map_urb_for_dma
+  usb_hcd_unmap_urb_for_dma
+  usb_hub_clear_tt_buffer
+  usb_phy_set_charger_current
+  usb_role_switch_get_role
+  usb_speed_string
+  usb_wakeup_enabled_descendants
+
 # required by fan53555.ko
   i2c_get_match_data
 
@@ -1693,6 +1724,11 @@
   tty_port_tty_wakeup
   tty_register_driver
   tty_std_termios
+
+# required by fusb302.ko
+  extcon_get_extcon_dev
+  fwnode_create_software_node
+  sched_set_fifo
 
 # required by gpio-rockchip.ko
   gpiochip_add_data_with_key
@@ -1819,6 +1855,16 @@
   __hwspin_unlock
   of_hwspin_lock_get_id
 
+# required by ohci-hcd.ko
+  gen_pool_dma_alloc_align
+  usb_hc_died
+  usb_hcd_poll_rh_status
+  usb_hcds_loaded
+  usb_root_hub_lost_power
+
+# required by ohci-platform.ko
+  usb_hcd_platform_shutdown
+
 # required by optee.ko
   __arm_smccc_hvc
   bus_for_each_dev
@@ -1834,6 +1880,44 @@
   pfn_is_map_memory
   __request_percpu_irq
   wait_for_completion_killable
+
+# required by pcie-dw-rockchip.ko
+  debugfs_create_devm_seqfile
+  device_release_driver
+  dw_pcie_find_capability
+  dw_pcie_find_ext_capability
+  dw_pcie_host_init
+  dw_pcie_link_up
+  dw_pcie_read
+  dw_pcie_read_dbi
+  dw_pcie_setup_rc
+  dw_pcie_write
+  dw_pcie_write_dbi
+  dw_pcie_write_dbi2
+  of_pci_get_slot_power_limit
+  pcie_capability_clear_and_set_word_locked
+  pci_walk_bus
+  phy_calibrate
+  phy_validate
+
+# required by pcie-rkep.ko
+  pcie_capability_read_word
+  pci_free_irq
+  pci_iomap
+  pci_iounmap
+  pci_request_irq
+
+# required by pcierockchiphost.ko
+  devm_pci_alloc_host_bridge
+  devm_pci_remap_cfg_resource
+  jiffies_to_usecs
+  of_pci_get_max_link_speed
+  pci_host_probe
+  pci_remove_root_bus
+  pci_stop_root_bus
+
+# required by phy-rockchip-inno-usb3.ko
+  usb_add_phy
 
 # required by pinctrl-rockchip.ko
   devm_kasprintf_strarray
@@ -2078,6 +2162,14 @@
 # required by sw_sync.ko
   dma_fence_signal_locked
 
+# required by tcpci_husb311.ko
+  device_find_child
+  device_match_name
+  tcpci_get_tcpm_port
+  tcpci_irq
+  tcpci_register_port
+  tcpci_unregister_port
+
 # required by tee.ko
   add_uevent_var
   class_find_device
@@ -2105,6 +2197,10 @@
 # required by tps65132-regulator.ko
   regulator_set_active_discharge_regmap
 
+# required by trancevibrator.ko
+  usb_get_dev
+  usb_put_dev
+
 # required by ufs-rockchip.ko
   devm_clk_bulk_get_all_enabled
   ufshcd_dme_enable
@@ -2118,3 +2214,53 @@
   ufshcd_suspend_prepare
   ufshcd_system_resume
   ufshcd_system_suspend
+
+# required by usb_f_rndis.ko
+  config_ep_by_speed
+  config_group_init_type_name
+  dev_get_stats
+  gether_attach_gadget
+  gether_cleanup
+  gether_connect
+  gether_detach_gadget
+  gether_disconnect
+  gether_get_dev_addr
+  gether_get_host_addr
+  gether_get_host_addr_u8
+  gether_get_ifname
+  gether_get_qmult
+  gether_register_netdev
+  gether_set_dev_addr
+  gether_set_gadget
+  gether_set_host_addr
+  gether_set_ifname
+  gether_set_qmult
+  gether_setup_name_default
+  skb_realloc_headroom
+  usb_assign_descriptors
+  usb_ep_alloc_request
+  usb_ep_autoconfig
+  usb_ep_disable
+  usb_ep_enable
+  usb_ep_free_request
+  usb_ep_queue
+  usb_free_all_descriptors
+  usb_function_register
+  usb_function_unregister
+  usb_gstrings_attach
+  usb_interface_id
+  usb_os_desc_prepare_interf_dir
+  usb_put_function_instance
+
+# required by usblp.ko
+  add_wait_queue
+  default_wake_function
+  remove_wait_queue
+  usb_anchor_urb
+  usb_find_common_endpoints
+  usb_find_interface
+  usb_get_intf
+  usb_kill_anchored_urbs
+  usb_poison_anchored_urbs
+  usb_put_intf
+  usb_unanchor_urb
