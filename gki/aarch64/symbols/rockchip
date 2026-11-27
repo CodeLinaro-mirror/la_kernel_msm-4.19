@@ -2278,6 +2278,14 @@
   simple_write_to_buffer
   strcpy
 
+# required by rga3.ko
+  follow_pfnmap_end
+  follow_pfnmap_start
+  idr_alloc_cyclic
+  kstrdup_quotable_cmdline
+  mmput
+  mtree_load
+
 # required by rk805-pwrkey.ko
   devm_request_any_context_irq
 
@@ -2309,11 +2317,46 @@
   oops_in_progress
   platform_device_register
 
+# required by rk_ircut.ko
+  drain_workqueue
+
 # required by rk_system_heap.ko
   contig_page_data
   mod_node_page_state
   __sg_page_iter_next
   __sg_page_iter_start
+
+# required by rk_vcodec.ko
+  devm_iounmap
+  disable_hardirq
+  fdget
+  __kthread_init_worker
+  kthread_worker_fn
+  proc_create_single_data
+  reserve_iova
+
+# required by rknpu.ko
+  alloc_iova
+  alloc_iova_fast
+  drm_gem_handle_delete
+  drm_gem_mmap_obj
+  drm_gem_prime_export
+  drm_gem_prime_fd_to_handle
+  drm_gem_prime_handle_to_fd
+  drm_gem_prime_import_dev
+  free_iova
+  free_iova_fast
+  of_dma_configure_id
+  set_user_nice
+  vmf_insert_mixed
+  vm_insert_page
+
+# required by rknpu3.ko
+  of_translate_dma_region
+
+# required by rkvtunnel.ko
+  fget
+  filp_close
 
 # required by rockchip-cpufreq.ko
   cpufreq_unregister_notifier
@@ -2341,6 +2384,15 @@
 
 # required by rockchip-fephy.ko
   phy_basic_features
+
+# required by rockchip-hdmirx.ko
+  cpu_latency_qos_remove_request
+  smp_call_function_single
+  v4l2_ctrl_log_status
+  v4l2_ctrl_subscribe_event
+  v4l2_find_dv_timings_cap
+  v4l2_src_change_event_subscribe
+  vb2_fop_read
 
 # required by rockchip_bus.ko
   cpu_topology
@@ -2688,6 +2740,91 @@
   phy_support_asym_pause
   usb_autopm_get_interface_no_resume
 
+# required by snd-soc-aw883xx.ko
+  gpiod_set_raw_value_cansleep
+  snd_soc_register_component
+
+# required by snd-soc-es8326.ko
+  regcache_cache_bypass
+
+# required by snd-soc-hdmi-codec.ko
+  snd_ctl_add
+  snd_ctl_new1
+  snd_info_create_card_entry
+  snd_info_free_entry
+  snd_parse_eld
+  snd_pcm_add_chmap_ctls
+  snd_pcm_create_iec958_consumer_default
+  snd_pcm_fill_iec958_consumer
+  snd_pcm_fill_iec958_consumer_hw_params
+  snd_pcm_hw_constraint_eld
+  snd_pcm_stop
+  snd_print_eld_info
+  snd_show_eld
+
+# required by snd-soc-rk730.ko
+  snd_soc_dapm_force_enable_pin
+  snd_soc_dapm_sync
+
+# required by snd-soc-rk817.ko
+  snd_soc_component_exit_regmap
+  snd_soc_component_init_regmap
+
+# required by snd-soc-rockchip-hdmi.ko
+  snd_soc_dapm_new_widgets
+
+# required by snd-soc-rockchip-i2s-tdm.ko
+  regcache_sync_region
+
+# required by snd-soc-rockchip-multicodecs.ko
+  of_phandle_iterator_init
+  of_phandle_iterator_next
+  snd_soc_dapm_get_pin_switch
+  snd_soc_dapm_info_pin_switch
+  snd_soc_dapm_put_pin_switch
+  snd_soc_jack_add_zones
+  snd_soc_jack_get_type
+  snd_soc_poweroff
+
+# required by snd-soc-rockchip-spdif.ko
+  snd_pcm_create_iec958_consumer_hw_params
+
+# required by snd-soc-rockchip-spdifrx.ko
+  snd_ctl_notify
+  snd_soc_card_get_kcontrol
+
+# required by snd-soc-rockchip-trcm.ko
+  snd_dmaengine_pcm_prepare_slave_config
+  snd_dmaengine_pcm_refine_runtime_hwparams
+  snd_dmaengine_pcm_set_config_from_dai_data
+  snd_pcm_hw_constraint_integer
+  snd_pcm_period_elapsed
+  snd_pcm_set_managed_buffer
+  snd_soc_add_component
+  snd_soc_component_initialize
+
+# required by snd-soc-simple-card-utils.ko
+  devm_get_clk_from_child
+  devm_kvasprintf
+  of_graph_get_endpoint_count
+  of_graph_get_next_port
+  of_graph_get_port_parent
+  snd_pcm_hw_constraint_minmax
+  snd_soc_card_jack_new
+  snd_soc_component_get_jack_type
+  snd_soc_component_set_sysclk
+  snd_soc_dai_active
+  snd_soc_dlc_use_cpu_as_platform
+  snd_soc_dummy_dlc
+  snd_soc_get_dai_id
+  snd_soc_of_parse_audio_simple_widgets
+  snd_soc_of_parse_pin_switches
+  snd_soc_runtime_calc_hw
+
+# required by snd-soc-simple-card.ko
+  snd_soc_of_parse_aux_devs
+  snd_soc_of_parse_node_prefix
+
 # required by stmmac-platform.ko
   device_get_phy_mode
   of_alias_get_highest_id
@@ -2982,3 +3119,28 @@
   vmalloc_user_noprof
   vmf_insert_pfn_prot
   vm_unmapped_area
+
+# required by video-rk628.ko
+  dput
+
+# required by video_rkcif.ko
+  arch_timer_read_counter
+  media_entity_setup_link
+  work_busy
+
+# required by video_rkisp.ko
+  devm_devfreq_remove_device
+  v4l2_ctrl_poll
+
+# required by video_rkvpss.ko
+  param_set_int
+  v4l2_fh_release
+
+# required by videobuf2-cma-sg.ko
+  frame_vector_to_pages
+  split_page
+  vb2_common_vm_ops
+  vb2_create_framevec
+  vb2_destroy_framevec
+  vm_map_ram
+  vm_unmap_ram
